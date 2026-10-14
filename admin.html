@@ -79,6 +79,7 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
       <div class="field"><label for="photoFile">Couple photo (JPG, PNG or WebP)</label><input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp"><button type="button" data-upload="photo" class="secondary">Upload and use couple photo</button><div class="path" id="photoPathText"></div></div>
       <div class="field"><label for="backgroundTarget">Which page should use the new background?</label><select id="backgroundTarget"><option value="cover">Opening cover</option><option value="scroll">Wedding scroll / date</option><option value="photo">Couple photo story</option><option value="lookbook">Wardrobe lookbook</option><option value="family">Family page</option><option value="countdown">Countdown page</option><option value="rsvp">RSVP page</option><option value="wishes">Guest wishes page</option></select><label for="backgroundFile">Background image (JPG, PNG or WebP; max 5 MB)</label><input id="backgroundFile" type="file" accept="image/jpeg,image/png,image/webp"><button type="button" data-upload="background" class="secondary">Upload background for selected page</button><div class="path" id="backgroundPathText"></div></div>
       <div class="field"><label for="floralFile">Floral frame (SVG only)</label><input id="floralFile" type="file" accept="image/svg+xml"><button type="button" data-upload="floral" class="secondary">Upload and use floral frame</button><div class="path">Replaces the existing floral-frame.svg used by the page borders.</div></div>
+      <div class="field"><label for="previewFile">WhatsApp share preview image (landscape JPG, PNG or WebP)</label><input id="previewFile" type="file" accept="image/jpeg,image/png,image/webp"><button type="button" data-upload="preview" class="secondary">Upload and use WhatsApp preview image</button><div class="path">Use a landscape image around 1200 × 630 pixels. This updates the static Open Graph/Twitter metadata as well as site settings.</div></div>
       <div class="field"><label for="lookbookFile">Wardrobe lookbook (PDF)</label><input id="lookbookFile" type="file" accept="application/pdf"><button type="button" data-upload="lookbook" class="secondary">Upload and use lookbook PDF</button><div class="path" id="lookbookPathText"></div></div>
       <div class="field"><label for="musicFile">Punjabi wedding music (MP3, M4A, OGG or WAV)</label><input id="musicFile" type="file" accept="audio/mpeg,audio/mp4,audio/ogg,audio/wav,audio/x-wav"><label><input id="musicRights" type="checkbox"> I have permission or a licence to publish this audio.</label><audio id="musicPreview" class="audio-preview" controls preload="none" hidden></audio><button type="button" data-upload="music" class="secondary">Upload and set invitation music</button><div class="path" id="musicPathText"></div></div>
       <div class="status" id="uploadStatus" role="status">No uploads yet.</div>
@@ -219,12 +220,26 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
     for(let i=0;i<bytes.length;i+=block)binary+=String.fromCharCode.apply(null,bytes.subarray(i,Math.min(i+block,bytes.length)));
     return btoa(binary);
   }
+  async function updateStaticSocialImage(path){
+    if(!path)return;
+    const current=await api('index.html');
+    const binary=atob(String(current.content||'').replace(/\\s/g,''));
+    const bytes=Uint8Array.from(binary,ch=>ch.charCodeAt(0));
+    let html=new TextDecoder().decode(bytes);
+    const absolute=new URL(path,'https://akhil-dileep.github.io/shreya-naman-invite/').href;
+    html=html.replace(/(<meta\\s+property=["']og:image["']\\s+content=["'])[^"']*(["'])/i,'$1'+absolute+'$3');
+    html=html.replace(/(<meta\\s+name=["']twitter:image["']\\s+content=["'])[^"']*(["'])/i,'$1'+absolute+'$3');
+    const body={message:'[admin] Update static social preview image',content:b64(new TextEncoder().encode(html)),sha:current.sha,branch:BRANCH};
+    await api('index.html',{method:'PUT',body});
+  }
   async function commitText(message){
     if(!loaded)throw new Error('Load settings before saving.');
+    const oldPreview=config.previewImage||'';
     document.querySelectorAll('[data-key]').forEach(el=>{config[el.dataset.key]=el.value;});
     const current=await api('site-content.json');
     const body={message,content:b64(new TextEncoder().encode(JSON.stringify(config,null,2)+'\n')),sha:current.sha,branch:BRANCH};
     await api('site-content.json',{method:'PUT',body});
+    if((config.previewImage||'')!==oldPreview)await updateStaticSocialImage(config.previewImage);
   }
   async function putFile(path,file){
     const current=await api(path).catch(err=>{if(String(err.message).includes('Not Found'))return null;throw err;});
@@ -265,6 +280,10 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
       const target=$('backgroundTarget').value;backgroundKey=backgroundConfigKey[target];
       if(!backgroundKey)throw new Error('Choose a valid page for the background.');
       path='assets/background-'+target+'-'+Date.now()+'.'+(ext==='jpeg'?'jpg':ext);
+    }else if(kind==='preview'){
+      file=$('previewFile').files[0];if(!file)throw new Error('Choose a social preview image first.');
+      const ext=safeExt(file,['jpg','jpeg','png','webp']);if(file.size>5*1024*1024)throw new Error('Preview image must be 5 MB or smaller.');
+      path='assets/share-preview-'+Date.now()+'.'+(ext==='jpeg'?'jpg':ext);
     }else{throw new Error('Unknown upload type.');}
     setBusy(true);status('uploadStatus','Uploading '+file.name+'…');
     try{
@@ -273,6 +292,11 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
       if(kind==='lookbook')config.lookbookPath=path;
       if(kind==='music')config.musicPath=path;
       if(kind==='background')config[backgroundKey]=path;
+      if(kind==='preview'){
+        config.previewImage=path;
+        const previewField=document.querySelector('[data-key="previewImage"]');
+        if(previewField)previewField.value=path;
+      }
       if(kind!=='floral')await commitText('[admin] Set '+(kind==='background'?backgroundKey:kind)+' asset to '+path);
       renderEditor();
       status('uploadStatus','Uploaded '+file.name+' and updated the invitation settings. Commit path: '+path,'ok');
