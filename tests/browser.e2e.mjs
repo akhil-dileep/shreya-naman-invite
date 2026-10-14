@@ -104,6 +104,11 @@ try {
   assert.match(await page.title(), /Invitation Admin/);
   await page.locator('#guestAdmin').waitFor({ state: 'visible' });
   assert.equal(await page.locator('#dbLogin').isVisible(), true, 'Admin guest database panel is available');
+  assert.equal(await page.locator('#backgroundTarget').isVisible(), true, 'Admin supports individual page backgrounds');
+  assert.equal(await page.locator('#musicPreview').count(), 1, 'Admin has a music preview player');
+  assert.equal(await page.locator('#previewBride').innerText(), 'Shreya Arora', 'Draft preview displays the configured bride name');
+  assert.equal(await page.locator('#previewGroom').innerText(), 'Naman Dora', 'Draft preview displays the configured groom name');
+  assert.equal(await page.locator('#field-weddingStartDateTime').inputValue(), '2026-12-14T16:00:00+05:30', 'Countdown target is editable in the admin');
 
   assert.deepEqual(errors, [], 'No uncaught JavaScript page errors');
   console.log('PASS: mobile/tablet/laptop layouts, scroll open-close-reopen, all ceremony cards, audio controls, RSVP/wish fallback, venue, PDF, WhatsApp share UI and admin panel.');
