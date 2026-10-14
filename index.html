@@ -172,10 +172,10 @@ const $=id=>document.getElementById(id);
 const sections=['dateSection','photoSection','lookbookSection','messageSection'];
 $('openSeal').addEventListener('click',()=>{ startMusic(); const family=$('familySection'); if(family){family.classList.remove('hidden');family.scrollIntoView({behavior:'smooth',block:'start'});}else{$('dateSection').classList.remove('hidden');$('dateSection').scrollIntoView({behavior:'smooth',block:'start'});} $('openSeal').textContent='✦'; $('openSeal').disabled=true; });
 const calendarEvents=[
- {id:'mehendi',start:'2026-12-13T12:00:00+05:30',end:'2026-12-13T15:00:00+05:30',titleId:'mehendiTitle',venueId:'mehendiVenue',dressId:'mehendiDress',fallbackTitle:'Mehendi Soirée'},
- {id:'engagement',start:'2026-12-13T19:00:00+05:30',end:'2026-12-13T23:00:00+05:30',titleId:'engagementTitle',venueId:'engagementVenue',dressId:'engagementDress',fallbackTitle:'Engagement & Cocktail Gala'},
+ {id:'mehendi',start:'2026-12-13T12:00:00+05:30',end:'2026-12-13T14:00:00+05:30',titleId:'mehendiTitle',venueId:'mehendiVenue',dressId:'mehendiDress',fallbackTitle:'Mehendi Soirée'},
+ {id:'engagement',start:'2026-12-13T19:00:00+05:30',end:'2026-12-13T21:00:00+05:30',titleId:'engagementTitle',venueId:'engagementVenue',dressId:'engagementDress',fallbackTitle:'Engagement & Cocktail Gala'},
  {id:'haldi',start:'2026-12-14T09:00:00+05:30',end:'2026-12-14T11:00:00+05:30',titleId:'haldiTitle',venueId:'haldiVenue',dressId:'haldiDress',fallbackTitle:'Haldi Ceremony'},
- {id:'wedding',start:'2026-12-14T16:00:00+05:30',end:'2026-12-14T20:00:00+05:30',titleId:'weddingTitle',venueId:'weddingVenue',dressId:'weddingRituals',fallbackTitle:'The Royal Wedding'}
+ {id:'wedding',start:'2026-12-14T16:00:00+05:30',end:'2026-12-14T18:00:00+05:30',titleId:'weddingTitle',venueId:'weddingVenue',dressId:'weddingRituals',fallbackTitle:'The Royal Wedding'}
 ];
 function calendarText(id,fallback){return $(id)?.textContent?.trim()||fallback;}
 function calendarUtcParts(iso){return new Date(iso).toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');}
