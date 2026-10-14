@@ -105,8 +105,8 @@ try {
   await page.locator('#photoSection').waitFor({ state: 'visible' });
   await page.locator('a[href="#lookbookSection"]').first().click();
   await page.locator('#lookbookSection').waitFor({ state: 'visible' });
-  assert.equal(await page.locator('#lookbookPdfLink').count(),0,'Wardrobe section no longer repeats the PDF');
-  assert.equal(await page.locator('#lookbookDownloadLink').count(),0,'Wardrobe section no longer repeats PDF download');
+  assert.equal(await page.locator('#lookbookSection a[href="lookbook-naman-shreya.pdf"][target="_blank"]').count(),1,'Wardrobe offers a view link to the detailed PDF');
+  assert.equal(await page.locator('#lookbookSection a[href="lookbook-naman-shreya.pdf"][download]').count(),1,'Wardrobe offers a PDF download link');
   assert.equal(await page.locator('#lookbookSection [data-calendar-event]').count(),0,'Wardrobe section has no calendar buttons');
   assert.equal(await page.locator('#lookbookSection .events article').count(),4,'Wardrobe section retains only four concise outfit palette cards');
   assert.equal(await page.locator('#dateSection .events [data-calendar-event]').count(),4,'Calendar actions remain on the wedding-scroll ceremony cards');
