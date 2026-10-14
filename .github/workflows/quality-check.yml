@@ -2,15 +2,24 @@ name: Invitation quality checks
 
 on:
   push:
-    branches: ["**"]
+    branches:
+      - main
+      - "upgrade/**"
+      - "backup/**"
   pull_request:
 
 permissions:
   contents: read
 
+concurrency:
+  group: invitation-quality-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   smoke-test:
+    name: Static, syntax and asset checks
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,5 +27,33 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-      - name: Check inline and external JavaScript syntax, content, assets and backend policy
+      - name: Check content, JavaScript syntax, assets and backend policy
         run: node tests/smoke.test.mjs
+
+  browser-test:
+    name: Chromium mobile end-to-end checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install Playwright
+        run: npm install --no-save playwright@1.55.0
+      - name: Install Chromium and OS dependencies
+        run: npx playwright install --with-deps chromium
+      - name: Start static invitation server
+        run: |
+          python3 -m http.server 4173 --bind 127.0.0.1 --directory . > /tmp/invite-http.log 2>&1 &
+          echo $! > /tmp/invite-http.pid
+          for attempt in $(seq 1 30); do
+            if curl --silent --fail http://127.0.0.1:4173/ > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/invite-http.log
+          exit 1
+      - name: Test mobile invitation flow and admin panel
+        run: node tests/browser.e2e.mjs
