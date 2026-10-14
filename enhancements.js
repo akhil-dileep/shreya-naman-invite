@@ -94,7 +94,7 @@
 
   async function insertPrivateRecord(table, payload){
     const cfg=window.inviteConfigPromise?await window.inviteConfigPromise:(window.INVITE_CONFIG||{});
-    const base=String(cfg.supabaseUrl||'').replace(/\\/+$/,'');
+    const base=String(cfg.supabaseUrl||'').replace(/\/+$/,'');
     const key=String(cfg.supabaseAnonKey||'');
     if(!base||!key)throw new Error('Guest database is not configured yet.');
     const response=await fetch(base+'/rest/v1/'+table,{
