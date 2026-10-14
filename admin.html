@@ -241,7 +241,7 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
   $('contentForm').addEventListener('submit',async ev=>{ev.preventDefault();if(working)return;setBusy(true);try{await commitText('[admin] Update invitation text and event details');renderEditor();status('saveStatus','Text saved to GitHub. Wait for the Pages workflow to finish, then refresh the invitation.','ok');}catch(e){status('saveStatus',e.message,'error');}finally{setBusy(false);}});
   document.querySelectorAll('[data-upload]').forEach(btn=>btn.addEventListener('click',async()=>{if(working)return;try{await upload(btn.dataset.upload);}catch(e){status('uploadStatus',e.message,'error');}}));
   let dbSession=null, latestRsvps=[], latestNotes=[];
-  const safeDbConfig=()=>({base:String(config.supabaseUrl||'').replace(/\\/+$/,''),key:String(config.supabaseAnonKey||'')});
+  const safeDbConfig=()=>({base:String(config.supabaseUrl||'').replace(/\/+$/,''),key:String(config.supabaseAnonKey||'')});
   async function dbFetch(path, options={}){
     const db=safeDbConfig();
     if(!db.base||!db.key)throw new Error('Save the Supabase URL and publishable/anon key in Backend and sharing settings first.');
@@ -295,8 +295,8 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
   function exportCsv(rows,fields,filename){
     if(!rows.length){status('dbStatus','There are no records to export yet.','error');return;}
     const escape=value=>'"'+String(value??'').replace(/"/g,'""')+'"';
-    const csv=[fields.join(','),...rows.map(row=>fields.map(key=>escape(row[key])).join(','))].join('\\r\\n');
-    const blob=new Blob(['\\ufeff',csv],{type:'text/csv;charset=utf-8;'});
+    const csv=[fields.join(','),...rows.map(row=>fields.map(key=>escape(row[key])).join(','))].join(String.fromCharCode(13,10));
+    const blob=new Blob([String.fromCharCode(0xFEFF),csv],{type:'text/csv;charset=utf-8;'});
     const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
   }
   $('dbLogin').addEventListener('click',async()=>{
