@@ -20,6 +20,18 @@ GitHub Pages serves static files and cannot run a private database itself. This 
 
 The browser-visible Supabase publishable/anon key is designed for public clients. Access control is enforced by SQL policies: guests may submit, but only a UUID listed in `invitation_admins` can read/manage the responses. Do not add secrets such as service_role keys to `site-content.json`.
 
+## Lookbook review and display
+
+The six-page PDF is embedded in the Wardrobe Lookbook section behind “Preview all 6 pages here”; guests can also open the original PDF in a separate tab or download it. The PDF was inspected page by page:
+- Page 1: cover and resort illustration.
+- Page 2: Mehendi, Sunday 13 December 2026.
+- Page 3: Engagement & Cocktail, Sunday 13 December 2026.
+- Page 4: Haldi, Monday 14 December 2026.
+- Page 5: Wedding, Monday 14 December 2026.
+- Page 6: after-party guidance.
+
+**Content reconciliation needed before final sharing:** the PDF's venue lines do not consistently match the invitation content: pages 2–5 use “Lawn at Namaste Corbett Resort”, “A Starlit Soirée”, “Outdoor Poolside”, and “A Starlit Garden Affair”, while the invitation uses “The Emerald Lawns”, “The Starlit Banquet”, “The Azure Poolside”, and “The Grand Regal Mandap”. Page 5 explicitly labels “A Starlit Garden Affair” as the venue. Confirm official names and update the source PDF artwork before treating those venue lines as final. Temperatures printed on the PDF are estimates, not live forecasts.
+
 ## WhatsApp preview and sharing
 
 The HTML contains Open Graph metadata and uses the existing `invitation-board.jpg` as the preview image. Sharing services cache previews; after publishing, paste the URL into a fresh WhatsApp chat to check it. If the old preview remains, wait for cache refresh; use a separate preview/debug tool where supported.
