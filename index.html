@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#123d31">
+<title>Shreya & Naman — Wedding Invitation</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&display=swap');
+:root{--green:#123d31;--deep:#092b23;--gold:#c49a54;--cream:#fff5df;--ink:#24473a}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:#f6ead0;color:var(--ink);font-family:'Cormorant Garamond',Georgia,serif}
+button,a{font:inherit}.screen{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:26px 16px;position:relative;overflow:hidden}
+.cover{background:radial-gradient(ellipse at 50% 25%,#1e5a43,var(--deep) 70%);color:var(--cream);text-align:center}
+.cover:before,.cover:after{content:"✿  ❧  ✦  ❧  ✿";position:absolute;color:#d4b36f;opacity:.6;letter-spacing:10px;font-size:22px;left:0;right:0}.cover:before{top:24px}.cover:after{bottom:24px}
+.frame{width:min(100%,590px);border:1px solid #c9a76a;padding:clamp(22px,6vw,48px);position:relative;box-shadow:0 0 0 7px #ffffff08,inset 0 0 30px #0002}
+.eyebrow{text-transform:uppercase;letter-spacing:.19em;font-size:.8rem}.script{font-family:'Great Vibes',cursive;font-weight:400}.names{font-size:clamp(3.5rem,12vw,6.3rem);line-height:1.02;color:#e4c47e;margin:20px 0 8px}.amp{font-size:2.3rem;color:#fff1d1}.intro{font-size:1.2rem;line-height:1.5}.seal{margin:28px auto 10px;width:90px;height:90px;border-radius:50%;border:2px solid #e5c77e;background:radial-gradient(circle,#9c3c2f,#68231e);color:#f9e4ad;box-shadow:0 0 0 6px #c9a76a30,0 7px 18px #0006;cursor:pointer;font-size:1.9rem;transition:transform .3s}.seal:hover{transform:scale(1.08) rotate(-8deg)}.hint{font-size:.9rem;opacity:.8;letter-spacing:.08em}
+.hidden{display:none!important}.reveal{animation:rise .8s both}@keyframes rise{from{opacity:0;transform:translateY(22px)}to{opacity:1;transform:none}}
+.paper{background:#fff5df url('invitation-board.jpg') center/cover fixed}.paper:before{content:"";position:absolute;inset:0;background:#fff4dfd9}.paper .frame{background:#fff8e9ed;border-color:#b98e4c;color:#21483a;text-align:center;backdrop-filter:blur(2px)}
+.section-title{font-size:clamp(2.5rem,8vw,4.6rem);color:#1b4b3a;margin:10px 0}.rule{color:#ad8140;letter-spacing:.4em;margin:16px}
+.scroll-wrap{width:min(100%,560px);position:relative;z-index:1;text-align:center}.scroll-rod{height:22px;border-radius:12px;background:linear-gradient(#f4dba0,#a87537,#f7dfaa);box-shadow:0 3px 8px #543b1b55;position:relative;z-index:2}.scroll-paper{background:#fff5df;border:1px solid #d2b478;overflow:hidden;max-height:0;transition:max-height 1.3s ease;padding:0 22px}.scroll-paper.open{max-height:1200px;padding:28px 22px}.pull{border:1px solid #e1c27e;background:#174a39;color:#fff4d7;border-radius:99px;padding:12px 24px;margin:20px;cursor:grab;box-shadow:0 5px 0 #0b2b22}.date{font-size:clamp(2.7rem,9vw,4.3rem);color:#a87537;line-height:1.05}.date small{display:block;font-size:1.15rem;letter-spacing:.16em;margin-top:8px}.events{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:16px;text-align:left;margin-top:24px}.event{padding:22px;background:#fffaf0;border:1px solid #d9c18e;box-shadow:0 7px 18px #74552b12}.event h3{font-size:1.6rem;font-weight:500;margin:0 0 7px;color:#174a39}.event p{margin:5px 0;font-size:1.05rem}.pill{display:inline-block;border:1px solid #b18a4b;border-radius:30px;padding:8px 16px;color:#174a39;text-decoration:none;margin-top:12px;background:#fff8e9;cursor:pointer}.pill:hover{background:#f0dfb9}
+.photo-section{background:#123d31;color:#fff4dc;text-align:center}.photo-section .frame{width:min(100%,620px)}.scratchbox{position:relative;width:min(100%,440px);aspect-ratio:4/5;margin:24px auto 12px;border:5px solid #d0ac65;box-shadow:0 10px 30px #0005;overflow:hidden;background:#e6d1a4}.scratchbox img{width:100%;height:100%;object-fit:cover;display:block}.scratchbox canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair;transition:opacity .6s}.scratchbox canvas.cleared{opacity:0;pointer-events:none}.scratch-hint{font-size:1.05rem;opacity:.85}.note{background:#fff4dd;color:#1c4938;text-align:center}.note textarea{width:100%;min-height:90px;border:1px solid #d5b77c;background:#fffaf0;padding:12px;font:1rem Georgia;resize:vertical}.music{position:fixed;right:14px;bottom:14px;z-index:10;border:1px solid #d8bb7a;border-radius:50px;background:#123d31;color:#fff0cb;padding:11px 15px;box-shadow:0 5px 18px #0003;cursor:pointer}.tiny{font-size:.92rem;opacity:.8}.lookbook-link{font-size:1.1rem;font-weight:600}.footer{padding:28px;text-align:center;background:#092b23;color:#f9e7bd}.toast{min-height:1.2em;font-style:italic}
+@media(max-width:480px){.screen{padding:16px 12px}.frame{padding:25px 18px}.events{grid-template-columns:1fr}.scroll-paper.open{padding:22px 15px}}
+</style>
+</head>
+<body>
+<button class="music" id="musicBtn" aria-label="Toggle background music">♫ Music: off</button>
+<section class="screen cover" id="cover">
+ <div class="frame">
+  <div class="eyebrow">Together with our families</div>
+  <div class="intro">We cordially invite you to celebrate the wedding of</div>
+  <h1 class="script names">Shreya Arora<br><span class="amp">&amp;</span><br>Naman Dora</h1>
+  <div class="rule">✦ ❧ ✦</div><div class="intro">Two hearts · One journey<br>Forever</div>
+  <p class="eyebrow" style="margin-top:25px">13 — 14 December 2026</p>
+  <button class="seal" id="openSeal" aria-label="Open invitation">❧</button>
+  <div class="hint">TAP THE SEAL TO OPEN YOUR INVITATION</div>
+ </div>
+</section>
+<section class="screen paper hidden" id="dateSection">
+ <div class="scroll-wrap reveal">
+  <div class="eyebrow">A little keepsake, sealed with love</div>
+  <h2 class="script section-title">The Wedding Scroll</h2>
+  <div class="scroll-rod"></div>
+  <div class="scroll-paper" id="scrollPaper">
+   <div class="eyebrow">Save the date</div><div class="date">14<small>DECEMBER · 2026</small></div>
+   <div class="rule">✦ ❧ ✦</div>
+   <p style="font-size:1.25rem">A new chapter begins</p>
+   <p>At <strong>Namaste Corbett Resort &amp; Spa</strong><br>Jim Corbett · Uttarakhand</p>
+   <div class="events">
+    <article class="event"><h3>Mehendi Soirée</h3><p><strong>Sunday, 13 December 2026</strong></p><p>12:00 noon onwards</p><p>Lawn at Namaste Corbett Resort</p><p><em>Festive &amp; Indo-Western</em></p></article>
+    <article class="event"><h3>Engagement &amp; Cocktail Gala</h3><p><strong>Sunday, 13 December 2026</strong></p><p>7:00 PM onwards</p><p>A Starlit Soirée</p><p><em>Evening glamour</em></p></article>
+    <article class="event"><h3>Haldi Ceremony</h3><p><strong>Monday, 14 December 2026</strong></p><p>9:00 AM onwards</p><p>Outdoor Poolside</p><p><em>Sunshine ethnic vibes</em></p></article>
+    <article class="event"><h3>The Royal Wedding</h3><p><strong>Monday, 14 December 2026</strong></p><p>4:00 PM onwards</p><p>The Grand Regal Mandap</p><p>Varmala 4:00 PM · Pheras 5:00 PM</p></article>
+   </div>
+   <p style="margin-top:25px">We can’t wait to celebrate with you.</p>
+   <a class="pill" href="#photoSection">Continue to our story ↓</a>
+  </div>
+  <button class="pull" id="pullScroll">↕ Pull the scroll to reveal the date</button>
+  <div class="tiny">Tap the scroll handle to unroll it</div>
+ </div>
+</section>
+<section class="screen photo-section hidden" id="photoSection">
+ <div class="frame reveal">
+  <div class="eyebrow">Our journey together</div><h2 class="script section-title" style="color:#e4c47e">Same souls, new adventures</h2>
+  <p>Scratch away the golden veil to reveal a little moment of us.</p>
+  <div class="scratchbox" id="scratchbox"><img src="couple-photo.jpg" alt="Shreya and Naman together"><canvas id="scratchCanvas" aria-label="Scratch to reveal the couple's photo"></canvas></div>
+  <div class="scratch-hint">✧ Use your finger or mouse to scratch the card ✧</div>
+  <p class="tiny">Tip: scratch across the gold surface; the photo will appear beneath.</p>
+  <a class="pill" href="#lookbookSection">Explore the celebrations ↓</a>
+ </div>
+</section>
+<section class="screen paper hidden" id="lookbookSection">
+ <div class="frame reveal">
+  <div class="eyebrow">Dress up for the celebrations</div><h2 class="script section-title">The Wardrobe Lookbook</h2>
+  <p style="font-size:1.2rem">A little colour inspiration for each celebration. These palettes are a guide — wear what feels most comfortable to you.</p>
+  <a class="pill lookbook-link" href="lookbook-naman-shreya.pdf" target="_blank" rel="noopener">✦ View the colour theme for each occasion</a>
+  <div class="events">
+   <article class="event"><h3>Mehendi</h3><p>Festive &amp; Indo-Western</p><p>Greens · Olive · Gold</p></article>
+   <article class="event"><h3>Engagement &amp; Cocktail</h3><p>Evening glamour</p><p>Rose · Burgundy · Emerald</p></article>
+   <article class="event"><h3>Haldi</h3><p>Sunshine ethnic vibes</p><p>Yellow · Marigold · Gold</p></article>
+   <article class="event"><h3>Wedding</h3><p>Festive Indian elegance</p><p>Ivory · Gold · Rose · Jewel tones</p></article>
+  </div>
+  <a class="pill" href="#messageSection">Leave us a little note ↓</a>
+ </div>
+</section>
+<section class="screen note hidden" id="messageSection">
+ <div class="frame reveal">
+  <div class="eyebrow">A little note for us</div><h2 class="script section-title">Your wishes mean the world</h2>
+  <p>Leave a wish, a memory, or a message for the couple.</p>
+  <textarea id="wish" placeholder="Write your message here…"></textarea>
+  <p><button class="pill" id="copyWish">Copy your note to share</button></p><div class="toast" id="toast" aria-live="polite"></div>
+  <p style="margin-top:28px">With love,</p><div class="script" style="font-size:3.4rem;color:#1b4b3a">Shreya &amp; Naman</div>
+  <a class="pill" href="#cover">↟ Back to the beginning</a>
+ </div>
+</section>
+<footer class="footer">Made with love for Shreya &amp; Naman · 13–14 December 2026</footer>
+<script>
+const $=id=>document.getElementById(id);
+const sections=['dateSection','photoSection','lookbookSection','messageSection'];
+$('openSeal').addEventListener('click',()=>{ $('dateSection').classList.remove('hidden'); $('dateSection').scrollIntoView({behavior:'smooth'}); $('openSeal').textContent='✦'; $('openSeal').disabled=true; });
+$('pullScroll').addEventListener('click',()=>{const p=$('scrollPaper');p.classList.toggle('open');$('pullScroll').textContent=p.classList.contains('open')?'↕ Roll the scroll back up':'↕ Pull the scroll to reveal the date'; if(p.classList.contains('open'))setTimeout(()=>{$('photoSection').classList.remove('hidden');$('lookbookSection').classList.remove('hidden');$('messageSection').classList.remove('hidden');initScratch();},500);});
+let audioCtx=null, master=null, musicOn=false, musicNodes=[];
+function startMusic(){audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();audioCtx.resume();master=audioCtx.createGain();master.gain.value=.10;master.connect(audioCtx.destination);
+ const notes=[261.63,329.63,392,493.88,392,329.63,293.66,349.23,440,523.25,440,349.23];
+ notes.forEach((f,i)=>{let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=f;g.gain.value=.0001;o.connect(g);g.connect(master);o.start();let t=audioCtx.currentTime+i*0.62;g.gain.setTargetAtTime(.09,t,.08);g.gain.setTargetAtTime(.0001,t+.48,.12);musicNodes.push({o,g});});
+ let pad=audioCtx.createOscillator(),pg=audioCtx.createGain();pad.type='triangle';pad.frequency.value=110;pg.gain.value=.025;pad.connect(pg);pg.connect(master);pad.start();musicNodes.push({o:pad,g:pg});
+ let idx=0;const play=()=>{if(!musicOn)return;const now=audioCtx.currentTime;let f=notes[idx++%notes.length];let o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.12,now+.08);g.gain.exponentialRampToValueAtTime(.0001,now+.8);o.connect(g);g.connect(master);o.start(now);o.stop(now+1);setTimeout(play,900)};play();}
+$('musicBtn').addEventListener('click',()=>{musicOn=!musicOn;if(musicOn){startMusic();$('musicBtn').textContent='♫ Music: on';}else{if(master)master.gain.setTargetAtTime(.0001,audioCtx.currentTime,.1);$('musicBtn').textContent='♫ Music: off';musicOn=false;}});
+let scratchReady=false;
+function initScratch(){if(scratchReady)return;scratchReady=true;const c=$('scratchCanvas'),box=$('scratchbox'),ctx=c.getContext('2d');const setup=()=>{const r=box.getBoundingClientRect();c.width=Math.round(r.width*devicePixelRatio);c.height=Math.round(r.height*devicePixelRatio);ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);const w=r.width,h=r.height;let grad=ctx.createLinearGradient(0,0,w,h);grad.addColorStop(0,'#f5e0a1');grad.addColorStop(.4,'#b88642');grad.addColorStop(.7,'#e7c77c');grad.addColorStop(1,'#9d6b32');ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);ctx.fillStyle='#fff2c8';ctx.textAlign='center';ctx.font='26px Georgia';ctx.fillText('A little surprise',w/2,h/2-12);ctx.font='15px Georgia';ctx.fillText('Scratch to reveal ✧',w/2,h/2+20);ctx.globalCompositeOperation='destination-out';};setup();let drawing=false;function point(e){const r=c.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}}function scratch(e){if(!drawing)return;e.preventDefault();const p=point(e);ctx.beginPath();ctx.arc(p.x,p.y,22,0,Math.PI*2);ctx.fill();}c.addEventListener('pointerdown',e=>{drawing=true;c.setPointerCapture(e.pointerId);scratch(e)});c.addEventListener('pointermove',scratch);c.addEventListener('pointerup',()=>{drawing=false;const d=ctx.getImageData(0,0,c.width,c.height).data;let clear=0;for(let i=3;i<d.length;i+=4)if(d[i]<20)clear++;if(clear>d.length/4*.43)c.classList.add('cleared')});window.addEventListener('resize',()=>{if(!c.classList.contains('cleared'))setup()});}
+$('copyWish').addEventListener('click',async()=>{let t=$('wish').value.trim();if(!t){$('toast').textContent='Write a little wish first.';return}try{await navigator.clipboard.writeText('A wish for Shreya & Naman: '+t);$('toast').textContent='Your note has been copied — share it with the couple!'}catch(e){$('wish').select();$('toast').textContent='Your note is selected. Copy it to share with the couple.'}});
+</script>
+</body></html>
