@@ -240,6 +240,83 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
   $('reloadConfig').addEventListener('click',async()=>{setBusy(true);try{await loadAll();status('saveStatus','Reloaded saved settings from the published site.','ok');}catch(e){status('saveStatus',e.message,'error');}finally{setBusy(false);}});
   $('contentForm').addEventListener('submit',async ev=>{ev.preventDefault();if(working)return;setBusy(true);try{await commitText('[admin] Update invitation text and event details');renderEditor();status('saveStatus','Text saved to GitHub. Wait for the Pages workflow to finish, then refresh the invitation.','ok');}catch(e){status('saveStatus',e.message,'error');}finally{setBusy(false);}});
   document.querySelectorAll('[data-upload]').forEach(btn=>btn.addEventListener('click',async()=>{if(working)return;try{await upload(btn.dataset.upload);}catch(e){status('uploadStatus',e.message,'error');}}));
+  let dbSession=null, latestRsvps=[], latestNotes=[];
+  const safeDbConfig=()=>({base:String(config.supabaseUrl||'').replace(/\\/+$/,''),key:String(config.supabaseAnonKey||'')});
+  async function dbFetch(path, options={}){
+    const db=safeDbConfig();
+    if(!db.base||!db.key)throw new Error('Save the Supabase URL and publishable/anon key in Backend and sharing settings first.');
+    const headers={'apikey':db.key,'Authorization':'Bearer '+(dbSession?.access_token||db.key),'Content-Type':'application/json','Accept':'application/json'};
+    if(options.body!==undefined)headers['Prefer']='return=minimal';
+    const response=await fetch(db.base+'/rest/v1/'+path,{method:options.method||'GET',headers,body:options.body===undefined?undefined:JSON.stringify(options.body)});
+    const data=await response.json().catch(()=>null);
+    if(!response.ok)throw new Error(data?.message||data?.hint||('Database request failed ('+response.status+'). Check the schema and ensure this admin is in invitation_admins.'));
+    return data;
+  }
+  function renderSubmissions(host,rows,kind){
+    host.replaceChildren();
+    if(!rows.length){const p=document.createElement('p');p.className='small';p.textContent='No submissions yet.';host.appendChild(p);return;}
+    rows.forEach(row=>{
+      const article=document.createElement('article');article.className='db-row';
+      const title=document.createElement('h3');title.textContent=kind==='rsvp'?(row.full_name||'Guest'):(row.sender_name||'Guest');article.appendChild(title);
+      const meta=document.createElement('div');meta.className='db-meta';
+      meta.textContent=new Date(row.created_at).toLocaleString()+(kind==='rsvp'?' · '+({yes:'Joyfully accepts',no:'Regretfully declines',maybe:'Not sure yet'}[row.attendance]||row.attendance)+' · '+row.guest_count+' guest(s)':' · '+(row.approved?'Approved':'Private / awaiting review'));
+      article.appendChild(meta);
+      if(kind==='rsvp'){
+        const details=document.createElement('p');details.textContent='Email: '+(row.email||'Not provided')+' · Phone: '+(row.phone||'Not provided');article.appendChild(details);
+        if(row.message){const msg=document.createElement('div');msg.className='db-message';msg.textContent=row.message;article.appendChild(msg);}
+      }else{
+        const msg=document.createElement('div');msg.className='db-message';msg.textContent=row.message||'';article.appendChild(msg);
+        const approve=document.createElement('button');approve.type='button';approve.className='secondary';approve.textContent=row.approved?'Mark private':'Approve wish';
+        approve.addEventListener('click',async()=>{
+          approve.disabled=true;
+          try{await dbFetch('wedding_notes?id=eq.'+encodeURIComponent(row.id),{method:'PATCH',body:{approved:!row.approved}});await loadSubmissions();}
+          catch(e){status('dbStatus','Could not update wish: '+e.message,'error');approve.disabled=false;}
+        });
+        article.appendChild(approve);
+      }
+      host.appendChild(article);
+    });
+  }
+  async function loadSubmissions(){
+    if(!dbSession)throw new Error('Sign in to the Supabase admin account first.');
+    status('dbStatus','Loading private guest submissions…');
+    const [rsvps,notes]=await Promise.all([
+      dbFetch('wedding_rsvps?select=id,created_at,full_name,email,phone,attendance,guest_count,message&order=created_at.desc&limit=250'),
+      dbFetch('wedding_notes?select=id,created_at,sender_name,message,approved&order=created_at.desc&limit=250')
+    ]);
+    latestRsvps=Array.isArray(rsvps)?rsvps:[];
+    latestNotes=Array.isArray(notes)?notes:[];
+    $('rsvpCount').textContent='RSVPs: '+latestRsvps.length;
+    $('noteCount').textContent='Wishes: '+latestNotes.length;
+    renderSubmissions($('rsvpRecords'),latestRsvps,'rsvp');
+    renderSubmissions($('noteRecords'),latestNotes,'note');
+    status('dbStatus','Private guest submissions loaded. Only an allow-listed admin can query these records.','ok');
+  }
+  function exportCsv(rows,fields,filename){
+    if(!rows.length){status('dbStatus','There are no records to export yet.','error');return;}
+    const escape=value=>'"'+String(value??'').replace(/"/g,'""')+'"';
+    const csv=[fields.join(','),...rows.map(row=>fields.map(key=>escape(row[key])).join(','))].join('\\r\\n');
+    const blob=new Blob(['\\ufeff',csv],{type:'text/csv;charset=utf-8;'});
+    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  }
+  $('dbLogin').addEventListener('click',async()=>{
+    const db=safeDbConfig(),email=$('dbEmail').value.trim(),password=$('dbPassword').value;
+    if(!db.base||!db.key){status('dbStatus','Set and save the Supabase URL and publishable/anon key above first.','error');return;}
+    if(!email||!password){status('dbStatus','Enter the Supabase admin email and password.','error');return;}
+    setBusy(true);
+    try{
+      const response=await fetch(db.base+'/auth/v1/token?grant_type=password',{method:'POST',headers:{'apikey':db.key,'Content-Type':'application/json'},body:JSON.stringify({email,password})});
+      const data=await response.json().catch(()=>({}));
+      if(!response.ok)throw new Error(data.msg||data.message||'Sign-in failed. Check the Supabase user and password.');
+      dbSession=data;$('dbPassword').value='';await loadSubmissions();
+    }catch(e){dbSession=null;status('dbStatus',e.message,'error');}
+    finally{setBusy(false);}
+  });
+  $('dbRefresh').addEventListener('click',async()=>{if(working)return;setBusy(true);try{await loadSubmissions();}catch(e){status('dbStatus',e.message,'error');}finally{setBusy(false);}});
+  $('dbLogout').addEventListener('click',()=>{dbSession=null;latestRsvps=[];latestNotes=[];$('rsvpRecords').textContent='Signed out.';$('noteRecords').textContent='Signed out.';$('rsvpCount').textContent='RSVPs: —';$('noteCount').textContent='Wishes: —';status('dbStatus','Signed out of the guest database.','');});
+  $('dbExportRsvps').addEventListener('click',()=>exportCsv(latestRsvps,['created_at','full_name','email','phone','attendance','guest_count','message'],'shreya-naman-rsvps.csv'));
+  $('dbExportNotes').addEventListener('click',()=>exportCsv(latestNotes,['created_at','sender_name','message','approved'],'shreya-naman-wishes.csv'));
+
   loadAll().catch(e=>status('accessStatus','Could not load public settings: '+e.message,'error'));
 })();
 </script>
