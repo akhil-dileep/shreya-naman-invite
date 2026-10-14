@@ -172,7 +172,7 @@ try {
   await dbPage.locator('#rsvpForm select[name="attendance"]').selectOption('yes');
   await dbPage.locator('#rsvpForm select[name="guests"]').selectOption('3');
   await dbPage.locator('#rsvpForm button[type="submit"]').click();
-  await dbPage.waitForFunction(()=>/received privately/.test(document.querySelector('#rsvpStatus')?.innerText||''));
+  await dbPage.waitForFunction(()=>/RSVP has been received/.test(document.querySelector('#rsvpStatus')?.innerText||''));
   await dbPage.locator('#messageSection').waitFor({state:'visible'});
   await dbPage.locator('#wishName').fill('Database Test Guest');
   await dbPage.locator('#wish').fill('A test blessing for your new journey.');
