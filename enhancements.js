@@ -162,3 +162,85 @@
     $('rsvpStatus').replaceChildren(link);
   });
 })();
+
+
+/* Final mobile overflow, discoverable RSVP, and unobtrusive continuous-music behavior. */
+(() => {
+  const $ = id => document.getElementById(id);
+  const fix = document.createElement('style');
+  fix.textContent = `
+    /* The expanded invitation is content-driven: never crop long text on phones. */
+    #dateSection.screen, #dateSection.paper { height:auto !important; min-height:100svh !important; max-height:none !important; overflow:visible !important; display:flex; align-items:flex-start !important; }
+    #dateSection .scroll-wrap { height:auto !important; max-height:none !important; overflow:visible !important; }
+    #dateSection .scroll-paper.open { height:auto !important; max-height:none !important; min-height:0 !important; overflow:visible !important; }
+    #dateSection .scroll-paper.open > * { max-height:none !important; }
+    #dateSection .events, #dateSection .event { overflow:visible !important; }
+    #dateSection .pull { margin-bottom:28px; }
+    #dateSection .scroll-paper.open { padding-bottom:32px !important; }
+    #rsvpSection { scroll-margin-top:16px; }
+    .invite-rsvp-link { display:inline-flex; align-items:center; justify-content:center; margin:12px auto; padding:12px 22px; min-height:46px; border-radius:40px; border:1px solid #c49a54; background:#123d31; color:#fff5df; text-decoration:none; text-align:center; max-width:100%; white-space:normal; }
+    @media(max-width:600px) {
+      #dateSection.screen, #dateSection.paper { padding-top:18px !important; padding-bottom:24px !important; }
+      #dateSection .scroll-wrap { width:100% !important; }
+      #dateSection .scroll-paper.open { padding:20px 14px 30px !important; }
+      #dateSection .events { grid-template-columns:minmax(0,1fr) !important; }
+      #dateSection .event { padding:18px 14px !important; }
+      #dateSection .scroll-paper.open p { line-height:1.55 !important; }
+      .invite-rsvp-link { width:100%; }
+    }
+  `;
+  document.head.appendChild(fix);
+
+  // The invitation scroll must remain fully readable regardless of viewport or text wrapping.
+  const paper = $('scrollPaper');
+  const resizeScroll = () => {
+    if (paper && paper.classList.contains('open')) {
+      paper.style.setProperty('max-height','none','important');
+      paper.style.setProperty('height','auto','important');
+      paper.style.setProperty('overflow','visible','important');
+    }
+  };
+  if (paper) {
+    new MutationObserver(resizeScroll).observe(paper,{attributes:true,attributeFilter:['class']});
+    window.addEventListener('resize',resizeScroll,{passive:true});
+    window.addEventListener('orientationchange',resizeScroll,{passive:true});
+    resizeScroll();
+  }
+
+  // Make RSVP easy to find from the scroll, couple photo, and lookbook.
+  function addRsvpLink(parent, label) {
+    if (!parent || parent.querySelector('[data-rsvp-shortcut]')) return;
+    const a=document.createElement('a');
+    a.href='#rsvpSection'; a.className='invite-rsvp-link'; a.dataset.rsvpShortcut='true';
+    a.textContent=label;
+    parent.appendChild(a);
+  }
+  addRsvpLink(paper,'Kindly RSVP · Let us know if you can join us');
+  addRsvpLink($('photoSection')?.querySelector('.frame'),'Kindly RSVP for the celebrations');
+  addRsvpLink($('lookbookSection')?.querySelector('.frame'),'Kindly RSVP · Respond to the invitation');
+  document.addEventListener('click',e=>{
+    const link=e.target.closest('a[href="#rsvpSection"]');
+    if(!link)return;
+    e.preventDefault();
+    const rsvp=$('rsvpSection');
+    if(rsvp){rsvp.classList.remove('hidden');rsvp.scrollIntoView({behavior:'smooth',block:'start'});}
+  });
+
+  // Remove the floating toggle. Browsers require a visitor gesture before audio can start,
+  // so begin the melody on the first tap/click (usually opening the invitation) and keep it playing.
+  const musicButton=$('musicBtn');
+  if (musicButton) {
+    let started=false;
+    const startAfterGesture=()=>{
+      if(started)return;
+      started=true;
+      try { musicButton.click(); } catch (_) {}
+      musicButton.remove();
+      document.removeEventListener('pointerdown',startAfterGesture,true);
+      document.removeEventListener('keydown',startAfterGesture,true);
+    };
+    document.addEventListener('pointerdown',startAfterGesture,true);
+    document.addEventListener('keydown',startAfterGesture,true);
+    musicButton.remove();
+  }
+})();
