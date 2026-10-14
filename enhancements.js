@@ -230,21 +230,8 @@
     if(rsvp){rsvp.classList.remove('hidden');rsvp.scrollIntoView({behavior:'smooth',block:'start'});}
   });
 
-  // Remove the floating toggle. Browsers require a visitor gesture before audio can start,
-  // so begin the melody on the first tap/click (usually opening the invitation) and keep it playing.
-  const musicButton=$('musicBtn');
-  if (musicButton) {
-    let started=false;
-    const startAfterGesture=()=>{
-      if(started)return;
-      started=true;
-      try { musicButton.click(); } catch (_) {}
-      musicButton.remove();
-      document.removeEventListener('pointerdown',startAfterGesture,true);
-      document.removeEventListener('keydown',startAfterGesture,true);
-    };
-    document.addEventListener('pointerdown',startAfterGesture,true);
-    document.addEventListener('keydown',startAfterGesture,true);
-    musicButton.remove();
-  }
+  // Keep the music control out of the design; index.html starts audio directly
+  // from the first genuine user gesture to satisfy mobile browser audio policies.
+  const musicButton = $('musicBtn');
+  if (musicButton) musicButton.remove();
 })();
