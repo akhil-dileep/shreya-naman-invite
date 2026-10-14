@@ -14,7 +14,7 @@ try {
   assert.equal(await page.locator('meta[property="og:title"]').count(), 1, 'WhatsApp/social title metadata exists');
   assert.equal(await page.locator('meta[property="og:image"]').count(), 1, 'WhatsApp/social preview image exists');
   assert.equal(await page.locator('#musicBtn').isVisible(), true, 'Visible music control is available');
-  assert.equal(await page.locator('#addAllCalendar').isVisible(),true,'Add all events to calendar control is visible');
+  assert.equal(await page.locator('#addAllCalendar').count(),1,'Add all events to calendar control exists');
   assert.equal(await page.locator('[data-calendar-event]').count(),4,'Each ceremony has an individual calendar action');
   assert.equal(await page.locator('#copyWish').count(),0,'Copy wish button is removed');
   assert.doesNotMatch(await page.locator('#messageSection').innerText(),/Your wish is private to the couple/i,'Wish privacy disclaimer is removed');
@@ -33,6 +33,7 @@ try {
     const p = document.querySelector('#scrollPaper');
     return p && p.classList.contains('open') && p.getBoundingClientRect().height > 300;
   });
+  assert.equal(await page.locator('#addAllCalendar').isVisible(),true,'Add all events to calendar control is visible once the scroll opens');
   assert.equal(await page.locator('#dateSection .events .event').count(), 4, 'All four ceremony cards render');
   assert.match(await page.locator('#scrollPaper').innerText(), /We can’t wait to celebrate with you\./);
   await page.waitForTimeout(900);
