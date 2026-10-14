@@ -18,7 +18,7 @@ assert.match(html,/id=["']shareInvite["']/i,'WhatsApp share action exists');
 assert.match(html,/id=["']copyInviteLink["']/i,'Copy-link action exists');
 assert.match(html,/id=["']venueDirections["']/i,'Venue directions exist');
 assert.match(html,/id=["']addAllCalendar["']/i,'Guests can add all events to calendar');
-for(const id of ['mehendi','engagement','haldi','wedding']) assert.match(html,new RegExp('data-calendar-event=["']'+id+'["']'),'Calendar action exists for '+id);
+for(const id of ['mehendi','engagement','haldi','wedding']) assert.ok(html.includes('data-calendar-event="'+id+'"'),'Calendar action exists for '+id);
 assert.doesNotMatch(html,/id=["']copyWish["']/i,'Unneeded copy-wish button is removed');
 assert.doesNotMatch(html,/Your wish is private to the couple/i,'Unneeded wish privacy disclaimer is removed');
 assert.doesNotMatch(js,/Your response is visible only in the couple/i,'Unneeded RSVP privacy disclaimer is removed');
