@@ -1,17 +1,12 @@
 SHREYA & NAMAN — INTERACTIVE WEDDING INVITATION
+Website: https://akhil-dileep.github.io/shreya-naman-invite/
+Admin: https://akhil-dileep.github.io/shreya-naman-invite/admin.html
 
-HOW TO PREVIEW
-1. Extract this ZIP.
-2. Open index.html in a modern browser. For best results, open through a simple local web server or upload the folder to a static hosting service.
-3. Keep index.html, invitation-board.jpg, couple-photo.jpg, and lookbook-naman-shreya.pdf together in the same folder.
+Guest features: wax seal, wedding scroll, event details, countdown, scratch-to-reveal photo, wardrobe lookbook, Google Maps directions, music play/mute, WhatsApp sharing, RSVP and private wishes.
 
-INTERACTIONS
-- Tap the wax seal to open the invite.
-- Tap “Pull the scroll” to reveal the date and event details.
-- Scratch the gold layer to reveal the couple photograph.
-- Open the wardrobe lookbook PDF from the colour-theme button.
-- Toggle the gentle generated instrumental-style tones with the Music button (starts only after a user tap).
-- Type a wish and copy it to share.
+Admin: Use a GitHub fine-grained token limited to this repository with Contents: Read and write. Uploaded photos, music, SVG and PDF are public in the repository; upload only assets you have permission to publish. Clear the token from the browser page when done.
 
-SHARE WITH GUESTS
-This ZIP is a ready-to-host website package, not a public URL. To share by link, upload the extracted folder to a static website host (for example, Netlify or GitHub Pages). Ensure the PDF and both image files are uploaded alongside index.html.
+Database: RSVP and wishes require one-time Supabase setup. Run supabase/schema.sql in the Supabase SQL Editor, create an admin Auth user, add that user's UUID to public.invitation_admins, disable public signups, then save the Supabase project URL and publishable/anon key in Admin -> Backend and sharing settings. See docs/PRODUCTION-SETUP.md. Never expose a service_role key.
+
+Backup: backup/pre-upgrade-2026-10-14
+Upgrade branch: upgrade/best-in-class-invite
