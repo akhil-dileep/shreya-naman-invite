@@ -21,6 +21,9 @@ assert.doesNotMatch(html,/id=["'](?:toggleLookbookPreview|lookbookPdfPreview|loo
 const wardrobe=html.split('id="lookbookSection"')[1].split('</section>')[0];
 assert.match(wardrobe,/href="lookbook-naman-shreya\.pdf"[^>]*target="_blank"/i,'Wardrobe provides a view link to the detailed PDF');
 assert.match(wardrobe,/href="lookbook-naman-shreya\.pdf"[^>]*download=/i,'Wardrobe provides a PDF download link');
+assert.match(wardrobe,/id="openRsvpForm" href="#rsvpSection"/,'Wardrobe has a clear RSVP form button');
+assert.match(wardrobe,/id="openWishForm" href="#messageSection"/,'Wardrobe has a clear wishes form button');
+assert.match(css,/response-actions \.response-primary/,'RSVP action is visually emphasized');
 assert.doesNotMatch(wardrobe,/data-calendar-event|Add to calendar/i,'Wardrobe section has no calendar controls');
 assert.doesNotMatch(wardrobe,/The Emerald Lawns|The Starlit Banquet|The Azure Poolside|The Grand Regal Mandap/i,'Venue labels remain in the wedding scroll, not the wardrobe section');
 assert.equal((html.match(/class="pill event-calendar" data-calendar-event=/g)||[]).length,4,'Calendar actions exist only on the four wedding-scroll event cards');
