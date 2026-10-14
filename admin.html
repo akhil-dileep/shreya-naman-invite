@@ -34,6 +34,14 @@ button:disabled{opacity:.5;cursor:wait}
 .status.error{border-color:#c66;background:#fff0ef;color:#84261c}
 .path{font-size:.9rem;color:#42594e;margin-top:5px;overflow-wrap:anywhere}
 #editors h3{border-bottom:1px solid #e2d0a9;padding-bottom:8px}
+.db-row{border:1px solid #dfc995;background:#fffdf7;padding:14px;margin:10px 0;overflow-wrap:anywhere}
+.db-row h3{margin:0 0 6px;font-size:1.08rem}
+.db-meta{font-size:.9rem;color:#52665b}
+.db-counts{display:flex;gap:10px;flex-wrap:wrap;margin:14px 0}
+.db-count{padding:10px 14px;border:1px solid #d9bd80;background:#f8efd9;font-weight:800}
+.db-message{white-space:pre-wrap;overflow-wrap:anywhere;background:#fff8e9;border:1px solid #eee0be;padding:12px;margin-top:8px}
+.db-row .secondary{margin-top:10px}
+@media(max-width:650px){.db-row{padding:12px}}
 footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
 @media(max-width:650px){.row{grid-template-columns:1fr}.card{padding:17px}.actions button,.actions .button{width:100%}body{font-size:16px}}
 </style>
@@ -68,6 +76,25 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
       <div class="status" id="saveStatus" role="status">No changes saved yet.</div>
     </section>
   </form>
+  <section class="card" id="guestAdmin">
+    <h2>📬 Guest submissions — private admin view</h2>
+    <p class="warn">First complete the Supabase one-time setup in <code>docs/PRODUCTION-SETUP.md</code>. Use a Supabase Auth admin account listed in <code>invitation_admins</code>. This panel never uses a service_role key. Guests can submit, but only the allow-listed admin can read submissions.</p>
+    <div class="row">
+      <div class="field"><label for="dbEmail">Admin email</label><input id="dbEmail" type="email" autocomplete="username" placeholder="Admin email"></div>
+      <div class="field"><label for="dbPassword">Admin password</label><input id="dbPassword" type="password" autocomplete="current-password" placeholder="Supabase admin password"></div>
+    </div>
+    <div class="actions">
+      <button type="button" id="dbLogin">Sign in to guest dashboard</button>
+      <button type="button" id="dbRefresh" class="secondary">Refresh submissions</button>
+      <button type="button" id="dbExportRsvps" class="secondary">Export RSVPs CSV</button>
+      <button type="button" id="dbExportNotes" class="secondary">Export wishes CSV</button>
+      <button type="button" id="dbLogout" class="secondary">Sign out of database</button>
+    </div>
+    <div class="status" id="dbStatus" role="status">Database not signed in.</div>
+    <div class="db-counts"><div class="db-count" id="rsvpCount">RSVPs: —</div><div class="db-count" id="noteCount">Wishes: —</div></div>
+    <h3>Wedding RSVPs</h3><div id="rsvpRecords"><p class="small">Sign in to view the private guest list.</p></div>
+    <h3>Guest wishes</h3><div id="noteRecords"><p class="small">Sign in to view private wishes.</p></div>
+  </section>
 </main>
 <footer>Shreya &amp; Naman · Invitation administration</footer>
 <script>
@@ -85,7 +112,8 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
     {title:'Haldi',keys:['haldiTitle','haldiDate','haldiTime','haldiVenue','haldiDress']},
     {title:'Wedding ceremony',keys:['weddingTitle','weddingDate','weddingTime','weddingVenue','weddingRituals']},
     {title:'Photo and lookbook',keys:['storyHeading','storyIntro','storyHint','lookbookHeading','lookbookIntro','lookbookButton']},
-    {title:'Countdown and RSVP',keys:['countdownHeading','rsvpHeading','rsvpIntro','closingMessage']}
+    {title:'Countdown and RSVP',keys:['countdownHeading','rsvpHeading','rsvpIntro','closingMessage']},
+    {title:'Backend and sharing settings',keys:['supabaseUrl','supabaseAnonKey','venueMapsUrl','rsvpWhatsappNumber','previewImage']}
   ];
   const labels={
     brideName:'Bride name',groomName:'Groom name',coverIntro:'Cover invitation text',taglineLine1:'Tagline line 1',taglineLine2:'Tagline line 2',weddingDates:'Date range on cover',weddingDay:'Wedding day number',weddingMonthYear:'Wedding month and year',venueName:'Venue name',venueLocation:'Venue location',
@@ -94,7 +122,8 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
     engagementTitle:'Event title',engagementDate:'Date',engagementTime:'Time',engagementVenue:'Venue',engagementDress:'Dress theme',
     haldiTitle:'Event title',haldiDate:'Date',haldiTime:'Time',haldiVenue:'Venue',haldiDress:'Dress theme',
     weddingTitle:'Event title',weddingDate:'Date',weddingTime:'Time',weddingVenue:'Venue',weddingRituals:'Varmala and pheras timings',
-    storyHeading:'Couple story heading',storyIntro:'Couple story introduction',storyHint:'Photo reveal instruction',lookbookHeading:'Lookbook heading',lookbookIntro:'Lookbook introduction',lookbookButton:'Lookbook button text',countdownHeading:'Countdown heading',rsvpHeading:'RSVP heading',rsvpIntro:'RSVP introduction',closingMessage:'Closing message'
+    storyHeading:'Couple story heading',storyIntro:'Couple story introduction',storyHint:'Photo reveal instruction',lookbookHeading:'Lookbook heading',lookbookIntro:'Lookbook introduction',lookbookButton:'Lookbook button text',countdownHeading:'Countdown heading',rsvpHeading:'RSVP heading',rsvpIntro:'RSVP introduction',closingMessage:'Closing message',
+    supabaseUrl:'Supabase project URL',supabaseAnonKey:'Supabase publishable / anon key (never service_role)',venueMapsUrl:'Google Maps directions URL',rsvpWhatsappNumber:'Host WhatsApp number (digits including country code)',previewImage:'WhatsApp preview image path'
   };
   const apiPath=p=>p.split('/').map(encodeURIComponent).join('/');
   function status(id,message,type){const el=$(id);el.textContent=message;el.className='status'+(type?' '+type:'');}
@@ -128,6 +157,10 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
         input=document.createElement(long?'textarea':'input');
         if(input.tagName==='INPUT')input.type='text';
         input.id='field-'+key;input.dataset.key=key;input.value=String(config[key]??'');
+        if(key==='supabaseAnonKey'){input.type='password';input.autocomplete='off';input.placeholder='Paste the public publishable/anon key only';}
+        if(key==='supabaseUrl'){input.type='url';input.placeholder='https://your-project.supabase.co';}
+        if(key==='venueMapsUrl'){input.type='url';}
+        if(key==='rsvpWhatsappNumber'){input.placeholder='Example: 919876543210';}
         wrap.append(label,input);grid.appendChild(wrap);
       });
       host.appendChild(grid);
