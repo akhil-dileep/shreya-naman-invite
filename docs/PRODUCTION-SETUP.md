@@ -22,7 +22,7 @@ The browser-visible Supabase publishable/anon key is designed for public clients
 
 ## Lookbook review and display
 
-The six-page PDF is embedded in the Wardrobe Lookbook section behind “Preview all 6 pages here”; guests can also open the original PDF in a separate tab or download it. The PDF was inspected page by page:
+The supplied six-page PDF is not embedded because its mobile inline preview was cropped. The invitation now offers only “View lookbook PDF” (opens the original in a separate tab) and “Download PDF”. Each of the four event cards and four wardrobe-colour cards also displays its confirmed official venue and an “Add to calendar” link. The PDF was inspected page by page:
 - Page 1: cover and resort illustration.
 - Page 2: Mehendi, Sunday 13 December 2026.
 - Page 3: Engagement & Cocktail, Sunday 13 December 2026.
@@ -30,7 +30,9 @@ The six-page PDF is embedded in the Wardrobe Lookbook section behind “Preview 
 - Page 5: Wedding, Monday 14 December 2026.
 - Page 6: after-party guidance.
 
-**Content reconciliation needed before final sharing:** the PDF's venue lines do not consistently match the invitation content: pages 2–5 use “Lawn at Namaste Corbett Resort”, “A Starlit Soirée”, “Outdoor Poolside”, and “A Starlit Garden Affair”, while the invitation uses “The Emerald Lawns”, “The Starlit Banquet”, “The Azure Poolside”, and “The Grand Regal Mandap”. Page 5 explicitly labels “A Starlit Garden Affair” as the venue. Confirm official names and update the source PDF artwork before treating those venue lines as final. Temperatures printed on the PDF are estimates, not live forecasts.
+The invitation and wardrobe-colour cards use the current configured venue labels: “The Emerald Lawns”, “The Starlit Banquet”, “The Azure Poolside”, and “The Grand Regal Mandap”. The original supplied PDF remains unchanged; its artwork still contains earlier venue wording, so use the webpage's venue cards as the authoritative labels. Temperatures printed in the PDF are estimates, not live forecasts.
+
+Calendar links open a prefilled Google Calendar event using the listed start time and a two-hour placeholder duration because exact end times were not supplied. Guests can adjust the end time in Google Calendar before saving.
 
 ## WhatsApp preview and sharing
 

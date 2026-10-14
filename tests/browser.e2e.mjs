@@ -90,14 +90,14 @@ try {
   assert.equal(await page.locator('#rsvpForm select[name="guests"] option').last().getAttribute('value'),'20','Guest count maximum matches database validation');
   await page.locator('#rsvpForm button[type="submit"]').click();
   await page.locator('#rsvpStatus').waitFor({ state: 'visible' });
-  assert.match(await page.locator('#rsvpStatus').innerText(), /not saved to the guest list|received privately/i, 'RSVP reports truthful save/fallback status');
+  assert.match(await page.locator('#rsvpStatus').innerText(), /not saved to the guest list|RSVP has been received/i, 'RSVP reports truthful save/fallback status');
 
   await page.locator('#messageSection').waitFor({ state: 'visible' });
   await page.locator('#wishName').fill('Automated Guest');
   await page.locator('#wish').fill('Wishing you both a beautiful life together.');
   await page.locator('#submitWish').click();
   await page.waitForFunction(() => document.querySelector('#toast')?.innerText.length > 0);
-  assert.match(await page.locator('#toast').innerText(), /not saved to the private guestbook|saved privately/i, 'Wish reports truthful save/fallback status');
+  assert.match(await page.locator('#toast').innerText(), /could not be sent|wish has been received/i, 'Wish reports truthful save/fallback status');
 
   await page.locator('#venueDirections').waitFor({ state: 'attached' });
   await page.locator('#lookbookPdfLink').waitFor({ state: 'attached' });
@@ -107,14 +107,18 @@ try {
   await page.locator('#photoSection').waitFor({ state: 'visible' });
   await page.locator('a[href="#lookbookSection"]').first().click();
   await page.locator('#lookbookSection').waitFor({ state: 'visible' });
-  const previewToggle=page.locator('#toggleLookbookPreview');
-  assert.equal(await previewToggle.isVisible(),true,'In-page lookbook preview control is visible');
-  await previewToggle.click();
-  assert.equal(await page.locator('#lookbookPdfPreview').isVisible(),true,'Lookbook opens in-page instead of immediately launching a new tab');
-  assert.match(await page.locator('#lookbookPdfFrame').getAttribute('data-src'),/lookbook-naman-shreya\.pdf#view=FitH/);
-  assert.equal(await previewToggle.getAttribute('aria-expanded'),'true','PDF preview toggle exposes its expanded state');
-  await previewToggle.click();
-  assert.equal(await page.locator('#lookbookPdfPreview').isVisible(),false,'Lookbook preview can be collapsed again');
+  assert.equal(await page.locator('#toggleLookbookPreview').count(),0,'No embedded PDF preview is shown');
+  assert.equal(await page.locator('#lookbookPdfPreview').count(),0,'No cropped in-page PDF container exists');
+  assert.equal(await page.locator('#lookbookPdfLink').innerText(),'View lookbook PDF ↗');
+  assert.equal(await page.locator('#lookbookDownloadLink').isVisible(),true,'PDF download remains available');
+  assert.equal(await page.locator('#lookbookSection .events [data-calendar-event]').count(),4,'Every colour-theme card has an add-to-calendar action');
+  assert.equal(await page.locator('#dateSection .events [data-calendar-event]').count(),4,'Every ceremony card has an add-to-calendar action');
+  assert.equal(await page.locator('#addAllCalendar').isVisible(),true,'Guests can download one calendar file for all events');
+  assert.equal(await page.locator('#copyWish').count(),0,'Redundant copy-wish action is removed');
+  assert.equal(await page.locator('#messageSection .tiny').count(),0,'Redundant wish privacy disclaimer is removed');
+  for(const venue of ['The Emerald Lawns','The Starlit Banquet','The Azure Poolside','The Grand Regal Mandap']) {
+    assert.ok((await page.locator('#lookbookSection').innerText()).includes(venue),'Lookbook card shows confirmed venue '+venue);
+  }
 
   await page.goto('http://127.0.0.1:4173/admin.html', { waitUntil: 'networkidle' });
   assert.match(await page.title(), /Invitation Admin/);
