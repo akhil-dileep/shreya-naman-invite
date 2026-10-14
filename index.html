@@ -128,7 +128,7 @@ strong{font-weight:800}
   <div class="eyebrow">Dress up for the celebrations</div><h2 class="script section-title" data-content="lookbookHeading">The Wardrobe Lookbook</h2>
   <p style="font-size:1.2rem"><span data-content="lookbookIntro">A little colour inspiration for each celebration. These palettes are a guide — wear what feels most comfortable to you.</span></p>
   <div class="lookbook-actions" aria-label="Lookbook viewing options">
-   <button type="button" class="pill lookbook-link" id="toggleLookbookPreview" aria-expanded="false" aria-controls="lookbookPdfPreview">✦ Preview all 6 pages here ↓</button>
+   <button type="button" class="pill lookbook-link" id="toggleLookbookPreview" aria-expanded="false" aria-controls="lookbookPdfPreview">✦ <span data-content="lookbookButton">Preview all 6 pages here ↓</span></button>
    <a class="pill lookbook-link" id="lookbookPdfLink" href="lookbook-naman-shreya.pdf" target="_blank" rel="noopener noreferrer">Open full PDF ↗</a>
    <a class="pill lookbook-link" id="lookbookDownloadLink" href="lookbook-naman-shreya.pdf" download="Naman-and-Shreya-Wedding-Lookbook.pdf">Download PDF ↓</a>
   </div>
@@ -181,7 +181,8 @@ lookbookToggle?.addEventListener('click',()=>{
  viewer.classList.toggle('hidden',!opening);
  viewer.hidden=!opening;
  lookbookToggle.setAttribute('aria-expanded',String(opening));
- lookbookToggle.textContent=opening?'Hide lookbook preview ↑':'Preview all 6 pages here ↓';
+ const toggleLabel=lookbookToggle.querySelector('[data-content="lookbookButton"]');
+ if(toggleLabel)toggleLabel.textContent=opening?'Hide lookbook preview ↑':((window.INVITE_CONFIG?.lookbookButton)||'Preview all 6 pages here ↓');
  if(opening&&frame&&!frame.dataset.loaded){frame.src=frame.dataset.src;frame.dataset.loaded='true';}
  if(opening)viewer.scrollIntoView({behavior:'smooth',block:'start'});
 });
@@ -310,8 +311,13 @@ window.inviteConfigPromise = (async function(){
     });
     const photo = document.getElementById('couplePhoto');
     if (photo && cfg.photoPath) photo.src = cfg.photoPath;
-    const pdf = document.getElementById('lookbookPdfLink');
-    if (pdf && cfg.lookbookPath) pdf.href = cfg.lookbookPath;
+    const lookbookPath = cfg.lookbookPath || 'lookbook-naman-shreya.pdf';
+    ['lookbookPdfLink','lookbookDownloadLink'].forEach(function(id){
+      const link=document.getElementById(id);
+      if(link)link.href=lookbookPath;
+    });
+    const previewFrame=document.getElementById('lookbookPdfFrame');
+    if(previewFrame)previewFrame.dataset.src=lookbookPath+'#view=FitH';
     const directions = document.getElementById('venueDirections');
     if (directions && cfg.venueMapsUrl) directions.href = cfg.venueMapsUrl;
     const shareImage = document.querySelector('meta[property="og:image"]');
