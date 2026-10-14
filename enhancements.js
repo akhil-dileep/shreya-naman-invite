@@ -56,10 +56,10 @@
   <label>Mobile number<input name="phone" type="tel" maxlength="40" autocomplete="tel" placeholder="Enter your phone number (optional)"></label>
   <label>Will you be attending? *<select name="attendance" required><option value="">Please choose</option><option value="yes">Yes, joyfully accepts</option><option value="no">Sorry, unable to attend</option><option value="maybe">Not sure yet</option></select></label>
   <label>Number of guests, including you<select name="guests" required><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option></select></label>
-  <button class="pill" type="submit">💌 Send RSVP privately</button>
+  <button class="pill" type="submit">💌 Send RSVP</button>
 </form>
 <p class="rsvp-status" id="rsvpStatus" aria-live="polite"></p>
-<p class="tiny">Your response is visible only in the couple’s private guest list. If saving fails, the page will tell you and offer a WhatsApp fallback. Please submit one RSVP per household, counting everyone attending including you.</p></div>`;
+<p class="tiny">Please submit one RSVP per household, counting everyone attending including you. If saving fails, you can send your response by WhatsApp instead.</p></div>`;
   const lookbook=$('lookbookSection');
   if(lookbook)lookbook.insertAdjacentElement('afterend',rsvp);else document.body.appendChild(rsvp);
 
@@ -138,15 +138,15 @@ $('rsvpForm')?.addEventListener('submit',async ev=>{
     const payload={full_name:name,email:String(data.get('email')||'').trim()||null,phone:String(data.get('phone')||'').trim()||null,attendance,guest_count:guestCount};
     const labels={yes:'Joyfully accepts',no:'Regretfully declines',maybe:'Not sure yet'};
     const whatsappLines=['Wedding RSVP — Shreya & Naman','Name: '+name,'Attendance: '+labels[attendance],'Guests: '+guestCount,'Email: '+(payload.email||'Not provided'),'Phone: '+(payload.phone||'Not provided')];
-    button.disabled=true;button.textContent='Sending RSVP…';status.textContent='Saving your RSVP privately…';
+    button.disabled=true;button.textContent='Sending RSVP…';status.textContent='Sending your RSVP…';
     try{
       await insertPrivateRecord('wedding_rsvps',payload);
-      status.textContent='Thank you, '+name+'! Your RSVP has been received privately by the couple.';
+      status.textContent='Thank you, '+name+'! Your RSVP has been received.';
       form.reset();
     }catch(error){
       offerWhatsAppFallback(status,whatsappLines,'This RSVP was not saved to the guest list. '+error.message);
     }finally{
-      button.disabled=false;button.textContent='💌 Send RSVP privately';
+      button.disabled=false;button.textContent='💌 Send RSVP';
     }
   });
   $('submitWish')?.addEventListener('click',async()=>{
@@ -158,11 +158,11 @@ $('rsvpForm')?.addEventListener('submit',async ev=>{
     button.disabled=true;button.textContent='Sending your wish…';
     try{
       await insertPrivateRecord('wedding_notes',{sender_name:name,message,approved:false});
-      status.textContent='Thank you, '+name+'! Your wish has been saved privately for the couple.';
+      status.textContent='Thank you, '+name+'! Your wish has been sent.';
       wishField.value='';
     }catch(error){
       const cfg=window.INVITE_CONFIG||{},number=String(cfg.rsvpWhatsappNumber||'').replace(/\D/g,'');
-      status.replaceChildren(document.createTextNode('Your wish was not saved to the private guestbook. '+error.message+' '));
+      status.replaceChildren(document.createTextNode('Your wish could not be sent. '+error.message+' '));
       const link=document.createElement('a');link.className='pill';
       link.href='https://wa.me/'+(number||'')+'?text='+encodeURIComponent('A wish for Shreya & Naman from '+name+':\n'+message);
       link.target='_blank';link.rel='noopener noreferrer';link.textContent='Send this wish on WhatsApp';status.appendChild(link);
