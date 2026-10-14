@@ -109,6 +109,12 @@ try {
   assert.equal(await page.locator('#lookbookSection a[href="lookbook-naman-shreya.pdf"][download]').count(),1,'Wardrobe offers a PDF download link');
   assert.equal(await page.locator('#lookbookSection [data-calendar-event]').count(),0,'Wardrobe section has no calendar buttons');
   assert.equal(await page.locator('#lookbookSection .events article').count(),4,'Wardrobe section retains only four concise outfit palette cards');
+  assert.equal(await page.locator('#openRsvpForm').count(),1,'Wardrobe has one clear RSVP form button');
+  assert.equal(await page.locator('#openWishForm').count(),1,'Wardrobe has one clear wishes form button');
+  await page.locator('#openRsvpForm').click();
+  await page.locator('#rsvpSection').waitFor({ state: 'visible' });
+  await page.locator('#openWishForm').click();
+  await page.locator('#messageSection').waitFor({ state: 'visible' });
   assert.equal(await page.locator('#dateSection .events [data-calendar-event]').count(),4,'Calendar actions remain on the wedding-scroll ceremony cards');
   assert.equal(await page.locator('#addAllCalendar').isVisible(),true,'Guests can download one calendar file for all events');
   assert.equal(await page.locator('#copyWish').count(),0,'Redundant copy-wish action is removed');
