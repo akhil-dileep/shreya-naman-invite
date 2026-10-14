@@ -189,7 +189,7 @@
       .invite-rsvp-link { width:100%; }
     }
   `;
-  document.head.appendChild(fix);
+  document.head.appendChild(responsiveStyle);
 
   // The invitation scroll must remain fully readable regardless of viewport or text wrapping.
   const paper = $('scrollPaper');
