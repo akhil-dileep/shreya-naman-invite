@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1600" preserveAspectRatio="xMidYMid slice">
+<defs>
+ <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#f6dca0"/><stop offset=".5" stop-color="#b67b36"/><stop offset="1" stop-color="#f3d99c"/></linearGradient>
+ <g id="flower">
+  <ellipse rx="13" ry="27" cy="-20" fill="#f7d6c9" stroke="#d99c78" stroke-width="1.5"/>
+  <ellipse rx="13" ry="27" cy="-20" fill="#fff0d9" stroke="#d99c78" stroke-width="1.5" transform="rotate(45)"/>
+  <ellipse rx="13" ry="27" cy="-20" fill="#e8a0a0" stroke="#d99c78" stroke-width="1.5" transform="rotate(90)"/>
+  <ellipse rx="13" ry="27" cy="-20" fill="#fff0d9" stroke="#d99c78" stroke-width="1.5" transform="rotate(135)"/>
+  <circle r="9" fill="#d8a44b"/><circle r="3" fill="#7e512e"/>
+ </g>
+ <g id="sprig" fill="#547b4e" stroke="#547b4e" stroke-width="2">
+  <path d="M0 0 Q35 28 68 78 Q92 111 125 130" fill="none" stroke-width="4"/>
+  <ellipse cx="23" cy="20" rx="8" ry="19" transform="rotate(-42 23 20)"/>
+  <ellipse cx="40" cy="40" rx="8" ry="18" transform="rotate(48 40 40)"/>
+  <ellipse cx="61" cy="67" rx="8" ry="20" transform="rotate(-40 61 67)"/>
+  <ellipse cx="82" cy="92" rx="8" ry="18" transform="rotate(45 82 92)"/>
+  <ellipse cx="104" cy="112" rx="7" ry="16" transform="rotate(-38 104 112)"/>
+ </g>
+</defs>
+<g opacity=".96">
+ <path d="M0 0H1200V20H20V1580H1180V20H1200V1600H0Z" fill="none" stroke="url(#gold)" stroke-width="8"/>
+ <path d="M0 0 Q90 15 130 95 T240 150 M1200 0 Q1110 15 1070 95 T960 150 M0 1600 Q90 1585 130 1505 T240 1450 M1200 1600 Q1110 1585 1070 1505 T960 1450" fill="none" stroke="#547b4e" stroke-width="7"/>
+ <use href="#sprig" transform="translate(8 5) rotate(10) scale(1.35)"/>
+ <use href="#sprig" transform="translate(1192 5) rotate(80) scale(1.35)"/>
+ <use href="#sprig" transform="translate(8 1595) rotate(-80) scale(1.35)"/>
+ <use href="#sprig" transform="translate(1192 1595) rotate(190) scale(1.35)"/>
+ <g transform="translate(90 85) scale(1.2)"><use href="#flower"/><use href="#flower" transform="translate(62 28) scale(.65)"/><use href="#flower" transform="translate(25 70) scale(.55)"/></g>
+ <g transform="translate(1110 85) scale(1.2)"><use href="#flower"/><use href="#flower" transform="translate(-62 28) scale(.65)"/><use href="#flower" transform="translate(-25 70) scale(.55)"/></g>
+ <g transform="translate(90 1515) scale(1.2)"><use href="#flower"/><use href="#flower" transform="translate(62 -28) scale(.65)"/><use href="#flower" transform="translate(25 -70) scale(.55)"/></g>
+ <g transform="translate(1110 1515) scale(1.2)"><use href="#flower"/><use href="#flower" transform="translate(-62 -28) scale(.65)"/><use href="#flower" transform="translate(-25 -70) scale(.55)"/></g>
+ <g fill="#dba64e"><circle cx="180" cy="45" r="5"/><circle cx="1020" cy="45" r="5"/><circle cx="180" cy="1555" r="5"/><circle cx="1020" cy="1555" r="5"/></g>
+</g></svg>
