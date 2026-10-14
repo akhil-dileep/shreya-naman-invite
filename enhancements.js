@@ -232,6 +232,27 @@
 
   // Keep the music control out of the design; index.html starts audio directly
   // from the first genuine user gesture to satisfy mobile browser audio policies.
+
+  /* Give the injected family, countdown and RSVP pages the same separate floral stationery treatment. */
+  const pageStyle = document.createElement('style');
+  pageStyle.textContent = `
+    .extra-section { isolation:isolate; background-image:linear-gradient(180deg,rgba(255,248,232,.96),rgba(255,243,218,.97)),url('floral-frame.svg');background-position:center;background-size:cover;color:#173f32; }
+    .extra-section:before { content:"";position:absolute;inset:7px;border:1px solid #c49a54;background:url('floral-frame.svg') center/100% 100% no-repeat;pointer-events:none;opacity:.95;z-index:-1; }
+    .extra-section.dark { background-image:linear-gradient(180deg,rgba(18,61,49,.97),rgba(9,43,35,.97)),url('floral-frame.svg');color:#fff5df; }
+    .extra-card { position:relative;z-index:1;border-radius:3px; }
+    .extra-title { font-family:'Cormorant Garamond',Georgia,serif;font-weight:700;font-style:normal;line-height:1.15;letter-spacing:.01em; }
+    .extra-card p,.extra-card label,.extra-card .family-item p { font-size:1.08rem;line-height:1.6; }
+    .extra-card h3,.family-item h3 { font-weight:700;line-height:1.25; }
+    .extra-card input,.extra-card select,.extra-card button { font-size:16px; }
+    @media(max-width:600px) {
+      .extra-section { padding:22px 12px; }
+      .extra-card { padding:22px 16px; }
+      .extra-title { font-size:clamp(2rem,8vw,2.7rem); }
+      .extra-card p,.extra-card label,.extra-card .family-item p { font-size:1.02rem; }
+    }
+  `;
+  document.head.appendChild(pageStyle);
+
   const musicButton = $('musicBtn');
   if (musicButton) musicButton.remove();
 })();
