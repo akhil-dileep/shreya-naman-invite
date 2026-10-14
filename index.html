@@ -137,7 +137,8 @@ const sections=['dateSection','photoSection','lookbookSection','messageSection']
 $('openSeal').addEventListener('click',()=>{ startMusic(); const family=$('familySection'); if(family){family.classList.remove('hidden');family.scrollIntoView({behavior:'smooth',block:'start'});}else{$('dateSection').classList.remove('hidden');$('dateSection').scrollIntoView({behavior:'smooth',block:'start'});} $('openSeal').textContent='✦'; $('openSeal').disabled=true; });
 $('pullScroll').addEventListener('click',()=>{const p=$('scrollPaper');const opening=!p.classList.contains('open');if(opening){p.style.maxHeight='none';p.classList.add('open');p.style.overflow='visible';}else{p.classList.remove('open');p.style.maxHeight='0';p.style.overflow='hidden';}$('pullScroll').textContent=opening?'↕ Roll the scroll back up':'↕ Pull the scroll to reveal the date';if(opening){['photoSection','lookbookSection','messageSection','rsvpSection'].forEach(id=>$(id)?.classList.remove('hidden'));initScratch();}});
 /* Energetic original dhol-style Punjabi wedding rhythm. This is generated audio, not a commercial song recording. */
-let audioCtx=null,musicMaster=null,musicComp=null,musicPlaying=false,musicTimer=null,musicStep=0,noiseBuffer=null;
+/* Music source: an admin-uploaded licensed audio file when configured; otherwise an original dhol-style fallback. */
+let audioCtx=null,musicMaster=null,musicComp=null,musicPlaying=false,musicMuted=false,musicTimer=null,musicStep=0,noiseBuffer=null,uploadedWeddingAudio=null,uploadedMusicPath='';
 const musicBtn=$('musicBtn');
 function ensureAudio(){
  if(audioCtx)return audioCtx;
@@ -152,7 +153,9 @@ function ensureAudio(){
  return audioCtx;
 }
 function musicStatus(text){
- if(musicBtn){musicBtn.textContent=text||(musicPlaying?'♫ Mute wedding music':'♫ Play wedding music');musicBtn.setAttribute('aria-pressed',String(musicPlaying));}
+ if(!musicBtn)return;
+ musicBtn.textContent=text||(musicMuted?'♫ Unmute wedding music':musicPlaying?'♫ Mute wedding music':'♫ Play wedding music');
+ musicBtn.setAttribute('aria-pressed',String(musicPlaying&&!musicMuted));
 }
 function hitTone(from,to,t,dur,vol,type){
  const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type||'sine';o.frequency.setValueAtTime(from,t);
@@ -175,25 +178,41 @@ function dholStep(step,t){
  if(n%2===0)hitTone(hook,hook,t,.17,.045,'sawtooth');
 }
 function dholLoop(){if(!musicPlaying||!audioCtx)return;dholStep(musicStep,audioCtx.currentTime);musicStep=(musicStep+1)%16;musicTimer=setTimeout(dholLoop,250);}
-function beginMusic(){
- if(musicPlaying)return;
- musicPlaying=true;musicMaster.gain.cancelScheduledValues(audioCtx.currentTime);musicMaster.gain.setTargetAtTime(.78,audioCtx.currentTime,.025);musicStatus();dholLoop();
+function updateMusicVolume(){
+ if(uploadedWeddingAudio)uploadedWeddingAudio.volume=musicMuted?0:1;
+ if(audioCtx&&musicMaster){musicMaster.gain.cancelScheduledValues(audioCtx.currentTime);musicMaster.gain.setTargetAtTime(musicMuted?.0001:.78,audioCtx.currentTime,.03);}
+ musicStatus();
+}
+function toggleMute(){
+ if(!musicPlaying)return startMusic();
+ musicMuted=!musicMuted;updateMusicVolume();
 }
 async function startMusic(){
- try{ensureAudio();await audioCtx.resume();if(audioCtx.state==='running')beginMusic();else musicStatus('♫ Tap to play wedding music');}
- catch(err){musicStatus('♫ Tap to retry wedding music');}
+ try{
+  const cfg=window.inviteConfigPromise?await window.inviteConfigPromise:(window.INVITE_CONFIG||{});
+  if(cfg && cfg.musicPath){
+   if(!uploadedWeddingAudio||uploadedMusicPath!==cfg.musicPath){
+    if(uploadedWeddingAudio){uploadedWeddingAudio.pause();uploadedWeddingAudio.src='';}
+    uploadedWeddingAudio=new Audio(cfg.musicPath);uploadedWeddingAudio.loop=true;uploadedWeddingAudio.preload='auto';uploadedMusicPath=cfg.musicPath;
+   }
+   await uploadedWeddingAudio.play();
+   musicPlaying=true;musicMuted=false;musicStatus();return;
+  }
+  ensureAudio();await audioCtx.resume();
+  if(audioCtx.state!=='running'){musicStatus('♫ Tap to play wedding music');return;}
+  if(musicPlaying){musicMuted=false;updateMusicVolume();return;}
+  musicPlaying=true;musicMuted=false;musicMaster.gain.setTargetAtTime(.78,audioCtx.currentTime,.025);musicStatus();dholLoop();
+ }catch(err){musicPlaying=false;musicStatus('♫ Tap to retry wedding music');}
 }
 function stopMusic(){
- musicPlaying=false;if(musicTimer)clearTimeout(musicTimer);
+ musicPlaying=false;musicMuted=false;if(musicTimer)clearTimeout(musicTimer);
+ if(uploadedWeddingAudio){uploadedWeddingAudio.pause();}
  if(audioCtx&&musicMaster){musicMaster.gain.cancelScheduledValues(audioCtx.currentTime);musicMaster.gain.setTargetAtTime(.0001,audioCtx.currentTime,.02);}
  musicStatus();
 }
-musicBtn?.addEventListener('click',()=>{if(musicPlaying)stopMusic();else startMusic();});
-/* Attempt autoplay once; keep the visible control if this browser requires a gesture. */
-(function tryAutoplay(){
- try{ensureAudio();const p=audioCtx.resume();if(audioCtx.state==='running')beginMusic();else{musicStatus('♫ Play wedding music');Promise.resolve(p).then(()=>{if(audioCtx&&audioCtx.state==='running')beginMusic();}).catch(()=>musicStatus('♫ Play wedding music'));}}
- catch(err){musicStatus('♫ Play wedding music');}
-})();
+musicBtn?.addEventListener('click',()=>{if(!musicPlaying)startMusic();else toggleMute();});
+/* Attempt autoplay. Browser policy may block this; the visible control is the fallback. */
+(function tryAutoplay(){startMusic();})();
 let scratchReady=false;
 function initScratch(){if(scratchReady)return;scratchReady=true;const c=$('scratchCanvas'),box=$('scratchbox'),ctx=c.getContext('2d');const setup=()=>{const r=box.getBoundingClientRect();c.width=Math.round(r.width*devicePixelRatio);c.height=Math.round(r.height*devicePixelRatio);ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);const w=r.width,h=r.height;let grad=ctx.createLinearGradient(0,0,w,h);grad.addColorStop(0,'#f5e0a1');grad.addColorStop(.4,'#b88642');grad.addColorStop(.7,'#e7c77c');grad.addColorStop(1,'#9d6b32');ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);ctx.fillStyle='#fff2c8';ctx.textAlign='center';ctx.font='26px Georgia';ctx.fillText('A little surprise',w/2,h/2-12);ctx.font='15px Georgia';ctx.fillText('Scratch to reveal ✧',w/2,h/2+20);ctx.globalCompositeOperation='destination-out';};setup();let drawing=false;function point(e){const r=c.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}}function scratch(e){if(!drawing)return;e.preventDefault();const p=point(e);ctx.beginPath();ctx.arc(p.x,p.y,22,0,Math.PI*2);ctx.fill();}c.addEventListener('pointerdown',e=>{drawing=true;c.setPointerCapture(e.pointerId);scratch(e)});c.addEventListener('pointermove',scratch);c.addEventListener('pointerup',()=>{drawing=false;const d=ctx.getImageData(0,0,c.width,c.height).data;let clear=0;for(let i=3;i<d.length;i+=4)if(d[i]<20)clear++;if(clear>d.length/4*.43)c.classList.add('cleared')});window.addEventListener('resize',()=>{if(!c.classList.contains('cleared'))setup()});}
 $('copyWish').addEventListener('click',async()=>{let t=$('wish').value.trim();if(!t){$('toast').textContent='Write a little wish first.';return}try{await navigator.clipboard.writeText('A wish for Shreya & Naman: '+t);$('toast').textContent='Your note has been copied — share it with the couple!'}catch(e){$('wish').select();$('toast').textContent='Your note is selected. Copy it to share with the couple.'}});
