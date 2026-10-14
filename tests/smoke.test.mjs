@@ -41,7 +41,7 @@ assert.match(admin,/musicPreview/,'Admin can preview an audio file before publis
 assert.match(admin,/weddingStartDateTime/,'Admin can adjust the countdown target');
 assert.match(admin,/Export RSVPs CSV/,'Admin can export RSVPs');
 for(const id of ['acceptCount','declineCount','maybeCount','attendeeCount','submissionDisplayNote']) assert.ok(admin.includes('id="'+id+'"')||admin.includes("id='"+id+"'"),'Admin shows RSVP summary '+id);
-assert.match(js,/Array\.from\(\{length:20\}/,'RSVP can record exact counts up to the database limit');
+assert.match(js,/<option value="20">20<\/option>/,'RSVP can record exact counts up to the database limit');
 assert.match(admin,/fetchAllRows/,'Admin computes totals across all database pages');
 assert.match(admin,/supabaseAnonKey/,'Admin can configure Supabase');
 assert.match(admin,/dbLogin/,'Admin can authenticate to the database');
