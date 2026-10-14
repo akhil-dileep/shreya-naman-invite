@@ -106,7 +106,15 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
       <button type="button" id="dbLogout" class="secondary">Sign out of database</button>
     </div>
     <div class="status" id="dbStatus" role="status">Database not signed in.</div>
-    <div class="db-counts"><div class="db-count" id="rsvpCount">RSVPs: —</div><div class="db-count" id="noteCount">Wishes: —</div></div>
+    <div class="db-counts" id="attendanceSummary" aria-label="RSVP summary">
+      <div class="db-count" id="rsvpCount">RSVP responses: —</div>
+      <div class="db-count" id="acceptCount">Accepting: —</div>
+      <div class="db-count" id="declineCount">Declined: —</div>
+      <div class="db-count" id="maybeCount">Maybe: —</div>
+      <div class="db-count" id="attendeeCount">Expected guests: —</div>
+      <div class="db-count" id="noteCount">Wishes: —</div>
+    </div>
+    <p class="small" id="submissionDisplayNote">Sign in to calculate totals from saved responses. The dashboard shows the latest 250 records per list; CSV exports include all saved records.</p>
     <h3>Wedding RSVPs</h3><div id="rsvpRecords"><p class="small">Sign in to view the private guest list.</p></div>
     <h3>Guest wishes</h3><div id="noteRecords"><p class="small">Sign in to view private wishes.</p></div>
   </section>
@@ -353,19 +361,39 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
       host.appendChild(article);
     });
   }
+  async function fetchAllRows(path,pageSize=1000){
+    const all=[];
+    for(let page=0;page<100;page++){
+      const offset=page*pageSize;
+      const batch=await dbFetch(path+'&limit='+pageSize+'&offset='+offset);
+      if(!Array.isArray(batch))return all;
+      all.push(...batch);
+      if(batch.length<pageSize)return all;
+    }
+    throw new Error('The guest list exceeded 100,000 records; use a paginated export before reviewing totals.');
+  }
   async function loadSubmissions(){
     if(!dbSession)throw new Error('Sign in to the Supabase admin account first.');
-    status('dbStatus','Loading private guest submissions…');
+    status('dbStatus','Loading private guest submissions and calculating totals…');
     const [rsvps,notes]=await Promise.all([
-      dbFetch('wedding_rsvps?select=id,created_at,full_name,email,phone,attendance,guest_count,message&order=created_at.desc&limit=250'),
-      dbFetch('wedding_notes?select=id,created_at,sender_name,message,approved&order=created_at.desc&limit=250')
+      fetchAllRows('wedding_rsvps?select=id,created_at,full_name,email,phone,attendance,guest_count,message&order=created_at.desc'),
+      fetchAllRows('wedding_notes?select=id,created_at,sender_name,message,approved&order=created_at.desc')
     ]);
     latestRsvps=Array.isArray(rsvps)?rsvps:[];
     latestNotes=Array.isArray(notes)?notes:[];
-    $('rsvpCount').textContent='RSVPs: '+latestRsvps.length;
+    const accepting=latestRsvps.filter(row=>row.attendance==='yes');
+    const declined=latestRsvps.filter(row=>row.attendance==='no');
+    const unsure=latestRsvps.filter(row=>row.attendance==='maybe');
+    const expectedGuests=accepting.reduce((sum,row)=>sum+Math.max(1,Number.parseInt(String(row.guest_count||1),10)||1),0);
+    $('rsvpCount').textContent='RSVP responses: '+latestRsvps.length;
+    $('acceptCount').textContent='Accepting: '+accepting.length;
+    $('declineCount').textContent='Declined: '+declined.length;
+    $('maybeCount').textContent='Maybe: '+unsure.length;
+    $('attendeeCount').textContent='Expected guests: '+expectedGuests;
     $('noteCount').textContent='Wishes: '+latestNotes.length;
-    renderSubmissions($('rsvpRecords'),latestRsvps,'rsvp');
-    renderSubmissions($('noteRecords'),latestNotes,'note');
+    $('submissionDisplayNote').textContent='Summary totals cover all '+latestRsvps.length+' RSVP response(s) and '+latestNotes.length+' wish(es). The latest 250 records are shown below; CSV exports include all records.';
+    renderSubmissions($('rsvpRecords'),latestRsvps.slice(0,250),'rsvp');
+    renderSubmissions($('noteRecords'),latestNotes.slice(0,250),'note');
     status('dbStatus','Private guest submissions loaded. Only an allow-listed admin can query these records.','ok');
   }
   function exportCsv(rows,fields,filename){
