@@ -78,7 +78,7 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
       <div class="field"><label for="backgroundTarget">Which page should use the new background?</label><select id="backgroundTarget"><option value="cover">Opening cover</option><option value="scroll">Wedding scroll / date</option><option value="photo">Couple photo story</option><option value="lookbook">Wardrobe lookbook</option><option value="family">Family page</option><option value="countdown">Countdown page</option><option value="rsvp">RSVP page</option><option value="wishes">Guest wishes page</option></select><label for="backgroundFile">Background image (JPG, PNG or WebP; max 5 MB)</label><input id="backgroundFile" type="file" accept="image/jpeg,image/png,image/webp"><button type="button" data-upload="background" class="secondary">Upload background for selected page</button><div class="path" id="backgroundPathText"></div></div>
       <div class="field"><label for="floralFile">Floral frame (SVG only)</label><input id="floralFile" type="file" accept="image/svg+xml"><button type="button" data-upload="floral" class="secondary">Upload and use floral frame</button><div class="path">Replaces the existing floral-frame.svg used by the page borders.</div></div>
       <div class="field"><label for="lookbookFile">Wardrobe lookbook (PDF)</label><input id="lookbookFile" type="file" accept="application/pdf"><button type="button" data-upload="lookbook" class="secondary">Upload and use lookbook PDF</button><div class="path" id="lookbookPathText"></div></div>
-      <div class="field"><label for="musicFile">Punjabi wedding music (MP3, M4A, OGG or WAV)</label><input id="musicFile" type="file" accept="audio/mpeg,audio/mp4,audio/ogg,audio/wav,audio/x-wav"><label><input id="musicRights" type="checkbox"> I have permission or a licence to publish this audio.</label><button type="button" data-upload="music" class="secondary">Upload and set invitation music</button><div class="path" id="musicPathText"></div></div>
+      <div class="field"><label for="musicFile">Punjabi wedding music (MP3, M4A, OGG or WAV)</label><input id="musicFile" type="file" accept="audio/mpeg,audio/mp4,audio/ogg,audio/wav,audio/x-wav"><label><input id="musicRights" type="checkbox"> I have permission or a licence to publish this audio.</label><audio id="musicPreview" controls preload="none" hidden style="display:block;width:100%;margin:10px 0"></audio><button type="button" data-upload="music" class="secondary">Upload and set invitation music</button><div class="path" id="musicPathText"></div></div>
       <div class="status" id="uploadStatus" role="status">No uploads yet.</div>
     </section>
     <section class="card">
@@ -114,7 +114,7 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
   'use strict';
   const OWNER='akhil-dileep', REPO='shreya-naman-invite', BRANCH='main';
   const $=id=>document.getElementById(id);
-  let token='', config={}, loaded=false, working=false;
+  let token='', config={}, loaded=false, working=false, musicPreviewObjectUrl='';
   const groups=[
     {title:'Names and cover',keys:['brideName','groomName','coverIntro','taglineLine1','taglineLine2','weddingDates']},
     {title:'Main wedding date and venue',keys:['weddingDay','weddingMonthYear','weddingDates','weddingStartDateTime','venueName','venueLocation']},
@@ -191,7 +191,13 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
     });
     $('photoPathText').textContent='Current: '+(config.photoPath||'couple-photo.jpg');
     $('lookbookPathText').textContent='Current: '+(config.lookbookPath||'lookbook-naman-shreya.pdf');
-    $('musicPathText').textContent='Current: '+(config.musicPath||'Original generated dhol-style fallback');
+    $('musicPathText').textContent='Current: '+(config.musicPath||'No uploaded track selected');
+    const player=$('musicPreview');
+    if(player){
+      if(musicPreviewObjectUrl){URL.revokeObjectURL(musicPreviewObjectUrl);musicPreviewObjectUrl='';}
+      player.src=config.musicPath||'';
+      player.hidden=!config.musicPath;
+    }
     updateBackgroundLabel();
     host.querySelectorAll('[data-key]').forEach(el=>el.addEventListener('input',updateDraftPreview));
     updateDraftPreview();
@@ -270,6 +276,13 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
       status('uploadStatus','Uploaded '+file.name+' and updated the invitation settings. Commit path: '+path,'ok');
     }finally{setBusy(false);}
   }
+  $('musicFile').addEventListener('change',()=>{
+    const file=$('musicFile').files[0],player=$('musicPreview');
+    if(!file||!player)return;
+    if(musicPreviewObjectUrl)URL.revokeObjectURL(musicPreviewObjectUrl);
+    musicPreviewObjectUrl=URL.createObjectURL(file);
+    player.src=musicPreviewObjectUrl;player.hidden=false;
+  });
   $('backgroundTarget').addEventListener('change',updateBackgroundLabel);
   $('checkToken').addEventListener('click',async()=>{setBusy(true);try{await checkToken();}catch(e){status('accessStatus',e.message,'error');}finally{setBusy(false);}});
   $('clearToken').addEventListener('click',()=>{token='';$('token').value='';status('accessStatus','Token cleared from this page.','');});
