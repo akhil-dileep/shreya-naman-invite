@@ -22,7 +22,7 @@ The browser-visible Supabase publishable/anon key is designed for public clients
 
 ## Lookbook review and display
 
-The supplied six-page PDF is not embedded because its mobile inline preview was cropped. The invitation now offers only “View lookbook PDF” (opens the original in a separate tab) and “Download PDF”. Each of the four event cards and four wardrobe-colour cards also displays its confirmed official venue and an “Add to calendar” link. The PDF was inspected page by page:
+The wardrobe section is intentionally limited to four short outfit/dress-code and colour-palette cards. Dates, times, official venues, and calendar controls live only in the wedding scroll, avoiding duplicated information. The cropped embedded PDF viewer and PDF links have been removed from the guest-facing page; the source PDF remains in the repository for the couple's reference. The PDF was inspected page by page:
 - Page 1: cover and resort illustration.
 - Page 2: Mehendi, Sunday 13 December 2026.
 - Page 3: Engagement & Cocktail, Sunday 13 December 2026.
@@ -30,9 +30,9 @@ The supplied six-page PDF is not embedded because its mobile inline preview was 
 - Page 5: Wedding, Monday 14 December 2026.
 - Page 6: after-party guidance.
 
-The invitation and wardrobe-colour cards use the current configured venue labels: “The Emerald Lawns”, “The Starlit Banquet”, “The Azure Poolside”, and “The Grand Regal Mandap”. The original supplied PDF remains unchanged; its artwork still contains earlier venue wording, so use the webpage's venue cards as the authoritative labels. Temperatures printed in the PDF are estimates, not live forecasts.
+The wedding scroll is the authoritative guest-facing source for the official venue labels: “The Emerald Lawns”, “The Starlit Banquet”, “The Azure Poolside”, and “The Grand Regal Mandap”. The original supplied PDF remains unchanged in the repository, but it is no longer linked from the invitation because its venue wording is outdated. Temperatures printed in the PDF are estimates, not live forecasts.
 
-Calendar links open a prefilled Google Calendar event using the listed start time and a two-hour placeholder duration because exact end times were not supplied. Guests can adjust the end time in Google Calendar before saving.
+Calendar actions are available from the wedding scroll only. The all-events iCalendar file uses the listed start times and estimated durations; guests can adjust durations before saving.
 
 ## WhatsApp preview and sharing
 
