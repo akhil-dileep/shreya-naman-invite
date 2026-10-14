@@ -86,6 +86,8 @@ try {
   await page.locator('#rsvpForm input[name="name"]').fill('Automated Guest');
   await page.locator('#rsvpForm select[name="attendance"]').selectOption('yes');
   await page.locator('#rsvpForm select[name="guests"]').selectOption('2');
+  assert.equal(await page.locator('#rsvpForm select[name="guests"] option').count(),20,'RSVP guest count offers exact headcounts from 1 through 20, with no ambiguous 5+ option');
+  assert.equal(await page.locator('#rsvpForm select[name="guests"] option').last().getAttribute('value'),'20','Guest count maximum matches database validation');
   await page.locator('#rsvpForm button[type="submit"]').click();
   await page.locator('#rsvpStatus').waitFor({ state: 'visible' });
   assert.match(await page.locator('#rsvpStatus').innerText(), /not saved to the guest list|received privately/i, 'RSVP reports truthful save/fallback status');
@@ -99,7 +101,20 @@ try {
 
   await page.locator('#venueDirections').waitFor({ state: 'attached' });
   await page.locator('#lookbookPdfLink').waitFor({ state: 'attached' });
+  await page.locator('#lookbookDownloadLink').waitFor({ state: 'attached' });
   await page.locator('#shareInvite').waitFor({ state: 'visible' });
+  await page.locator('a[href="#photoSection"]').first().click();
+  await page.locator('#photoSection').waitFor({ state: 'visible' });
+  await page.locator('a[href="#lookbookSection"]').first().click();
+  await page.locator('#lookbookSection').waitFor({ state: 'visible' });
+  const previewToggle=page.locator('#toggleLookbookPreview');
+  assert.equal(await previewToggle.isVisible(),true,'In-page lookbook preview control is visible');
+  await previewToggle.click();
+  assert.equal(await page.locator('#lookbookPdfPreview').isVisible(),true,'Lookbook opens in-page instead of immediately launching a new tab');
+  assert.match(await page.locator('#lookbookPdfFrame').getAttribute('data-src'),/lookbook-naman-shreya\.pdf#view=FitH/);
+  assert.equal(await previewToggle.getAttribute('aria-expanded'),'true','PDF preview toggle exposes its expanded state');
+  await previewToggle.click();
+  assert.equal(await page.locator('#lookbookPdfPreview').isVisible(),false,'Lookbook preview can be collapsed again');
 
   await page.goto('http://127.0.0.1:4173/admin.html', { waitUntil: 'networkidle' });
   assert.match(await page.title(), /Invitation Admin/);
@@ -171,6 +186,11 @@ try {
   await dbPage.waitForFunction(()=>/Private guest submissions loaded/.test(document.querySelector('#dbStatus')?.innerText||''));
   assert.match(await dbPage.locator('#rsvpRecords').innerText(),/Sample Guest/,'Admin can view RSVP submissions');
   assert.match(await dbPage.locator('#noteRecords').innerText(),/Wishing you both a beautiful life/,'Admin can view guest wishes');
+  assert.equal(await dbPage.locator('#rsvpCount').innerText(),'RSVP responses: 1','Admin counts stored RSVP records');
+  assert.equal(await dbPage.locator('#acceptCount').innerText(),'Accepting: 1','Admin separates accepting parties');
+  assert.equal(await dbPage.locator('#declineCount').innerText(),'Declined: 0','Admin counts declined parties');
+  assert.equal(await dbPage.locator('#maybeCount').innerText(),'Maybe: 0','Admin counts tentative parties');
+  assert.equal(await dbPage.locator('#attendeeCount').innerText(),'Expected guests: 2','Admin sums party sizes for accepted RSVPs');
   const [csvDownload]=await Promise.all([dbPage.waitForEvent('download'),dbPage.locator('#dbExportRsvps').click()]);
   assert.equal(csvDownload.suggestedFilename(),'shreya-naman-rsvps.csv','Admin can export RSVP CSV');
 
