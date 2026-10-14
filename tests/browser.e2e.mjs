@@ -111,8 +111,9 @@ try {
   assert.equal(await page.locator('#lookbookPdfPreview').count(),0,'No cropped in-page PDF container exists');
   assert.equal(await page.locator('#lookbookPdfLink').innerText(),'View lookbook PDF ↗');
   assert.equal(await page.locator('#lookbookDownloadLink').isVisible(),true,'PDF download remains available');
-  assert.equal(await page.locator('#lookbookSection .events .calendar-link').count(),4,'Every colour-theme card has an add-to-calendar link');
-  assert.equal(await page.locator('#dateSection .events .calendar-link').count(),4,'Every ceremony card has an add-to-calendar link');
+  assert.equal(await page.locator('#lookbookSection .events [data-calendar-event]').count(),4,'Every colour-theme card has an add-to-calendar action');
+  assert.equal(await page.locator('#dateSection .events [data-calendar-event]').count(),4,'Every ceremony card has an add-to-calendar action');
+  assert.equal(await page.locator('#addAllCalendar').isVisible(),true,'Guests can download one calendar file for all events');
   assert.equal(await page.locator('#copyWish').count(),0,'Redundant copy-wish action is removed');
   assert.equal(await page.locator('#messageSection .tiny').count(),0,'Redundant wish privacy disclaimer is removed');
   for(const venue of ['The Emerald Lawns','The Starlit Banquet','The Azure Poolside','The Grand Regal Mandap']) {
