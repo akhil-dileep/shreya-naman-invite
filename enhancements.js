@@ -97,6 +97,8 @@
     seal.replaceWith(replacement);
     replacement.addEventListener('click', () => {
       replacement.textContent = '✦'; replacement.disabled = true;
+      // The seal tap is a genuine user gesture, so start audio here for mobile browsers.
+      if (typeof startMusic === 'function') startMusic();
       revealExtra('familySection');
       $('dateSection')?.classList.remove('hidden');
       $('countdownSection')?.classList.remove('hidden');
@@ -189,7 +191,7 @@
       .invite-rsvp-link { width:100%; }
     }
   `;
-  document.head.appendChild(responsiveStyle);
+  document.head.appendChild(fix);
 
   // The invitation scroll must remain fully readable regardless of viewport or text wrapping.
   const paper = $('scrollPaper');
