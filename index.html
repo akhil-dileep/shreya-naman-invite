@@ -159,13 +159,26 @@ strong{font-weight:800}
   <button type="button" class="pill" id="shareInvite">💌 Share invitation on WhatsApp</button>
   <button type="button" class="pill" id="copyInviteLink">🔗 Copy invitation link</button>
  </div>
- <p class="tiny">We can’t wait to celebrate with you.</p>
+ <p class="tiny">We can’t wait to celebrate with you.</p><p class="tiny" id="shareStatus" aria-live="polite"></p>
 </footer>
 <script>
 const $=id=>document.getElementById(id);
 const sections=['dateSection','photoSection','lookbookSection','messageSection'];
 $('openSeal').addEventListener('click',()=>{ startMusic(); const family=$('familySection'); if(family){family.classList.remove('hidden');family.scrollIntoView({behavior:'smooth',block:'start'});}else{$('dateSection').classList.remove('hidden');$('dateSection').scrollIntoView({behavior:'smooth',block:'start'});} $('openSeal').textContent='✦'; $('openSeal').disabled=true; });
-$('pullScroll').addEventListener('click',()=>{const p=$('scrollPaper');const opening=!p.classList.contains('open');if(opening){p.style.maxHeight='none';p.classList.add('open');p.style.overflow='visible';}else{p.classList.remove('open');p.style.maxHeight='0';p.style.overflow='hidden';}$('pullScroll').textContent=opening?'↕ Roll the scroll back up':'↕ Pull the scroll to reveal the date';if(opening){['photoSection','lookbookSection','messageSection','rsvpSection'].forEach(id=>$(id)?.classList.remove('hidden'));initScratch();}});
+$('pullScroll').addEventListener('click',()=>{
+ const p=$('scrollPaper'),button=$('pullScroll'),opening=!p.classList.contains('open');
+ if(opening){
+   p.style.maxHeight='0px';p.style.overflow='hidden';p.classList.add('open');
+   requestAnimationFrame(()=>{p.style.maxHeight=p.scrollHeight+'px';});
+   const onOpenEnd=ev=>{if(ev.propertyName!=='max-height')return;if(p.classList.contains('open')){p.style.maxHeight='none';p.style.overflow='visible';}p.removeEventListener('transitionend',onOpenEnd);};
+   p.addEventListener('transitionend',onOpenEnd);
+ }else{
+   p.style.overflow='hidden';p.style.maxHeight=p.scrollHeight+'px';
+   requestAnimationFrame(()=>{p.classList.remove('open');p.style.maxHeight='0px';});
+ }
+ button.textContent=opening?'↕ Roll the scroll back up':'↕ Pull the scroll to reveal the date';
+ if(opening){['photoSection','lookbookSection','messageSection','rsvpSection'].forEach(id=>$(id)?.classList.remove('hidden'));initScratch();}
+});
 /* Energetic original dhol-style Punjabi wedding rhythm. This is generated audio, not a commercial song recording. */
 /* Music source: an admin-uploaded licensed audio file when configured; otherwise an original dhol-style fallback. */
 let audioCtx=null,musicMaster=null,musicComp=null,musicPlaying=false,musicMuted=false,musicTimer=null,musicStep=0,noiseBuffer=null,uploadedWeddingAudio=null,uploadedMusicPath='';
@@ -253,7 +266,7 @@ $('shareInvite')?.addEventListener('click',()=>{
 });
 $('copyInviteLink')?.addEventListener('click',async()=>{
  const link=window.location.href.split('#')[0];
- const toast=$('toast');
+ const toast=$('shareStatus')||$('toast');
  try{await navigator.clipboard.writeText(link);if(toast)toast.textContent='Invitation link copied. You can paste it into WhatsApp.';}
  catch(err){if(toast)toast.textContent='Copy this invitation link: '+link;}
 });
