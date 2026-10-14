@@ -198,6 +198,10 @@
       paper.style.setProperty('max-height','none','important');
       paper.style.setProperty('height','auto','important');
       paper.style.setProperty('overflow','visible','important');
+    } else if (paper) {
+      paper.style.removeProperty('max-height');
+      paper.style.removeProperty('height');
+      paper.style.removeProperty('overflow');
     }
   };
   if (paper) {
