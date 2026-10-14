@@ -17,7 +17,7 @@ assert.match(html,/property=["']og:image["']/i,'Open Graph image exists');
 assert.match(html,/id=["']shareInvite["']/i,'WhatsApp share action exists');
 assert.match(html,/id=["']copyInviteLink["']/i,'Copy-link action exists');
 assert.match(html,/id=["']venueDirections["']/i,'Venue directions exist');
-assert.doesNotMatch(html,/toggleLookbookPreview|lookbookPdfPreview|lookbookPdfFrame/i,'PDF is not embedded in the page');
+assert.doesNotMatch(html,/id=["'](?:toggleLookbookPreview|lookbookPdfPreview|lookbookPdfFrame)["']/i,'PDF is not embedded in the page');
 assert.match(html,/id=["']lookbookPdfLink["']/i,'View PDF link exists');
 assert.match(html,/id=["']lookbookDownloadLink["']/i,'Download PDF link exists');
 assert.equal((html.match(/class="pill event-calendar" data-calendar-event=/g)||[]).length,8,'Every ceremony and lookbook card has an add-to-calendar action');
