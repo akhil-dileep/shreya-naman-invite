@@ -107,3 +107,17 @@ input,select,textarea{font-size:16px!important}
 #messageSection .toast{min-height:1.5em;margin:12px 0;overflow-wrap:anywhere}
 #messageSection .tiny{color:inherit;opacity:.9}
 #shareStatus{min-height:1.2em;overflow-wrap:anywhere}
+
+
+/* Inline lookbook PDF viewer: keep the guest inside the invitation, with clear fallbacks. */
+.lookbook-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:9px;margin:18px 0}
+.lookbook-actions .pill{margin:0}
+.lookbook-viewer{margin:20px 0;padding:12px;border:1px solid #c8a466;background:#fff9e9;box-shadow:0 8px 24px #3b291414;text-align:left}
+.lookbook-viewer[hidden]{display:none!important}
+.lookbook-viewer-heading{display:flex;flex-wrap:wrap;justify-content:space-between;gap:6px 14px;align-items:baseline;margin:0 0 10px;color:#174a39}
+.lookbook-viewer-heading span{font-size:.92rem;color:#52665b}
+.lookbook-viewer iframe{display:block;width:100%;height:min(78svh,940px);min-height:560px;border:1px solid #d6c29b;background:#e6ddca}
+.lookbook-viewer-fallback{font-size:.92rem!important;line-height:1.5!important;margin:10px 0 0!important}
+.lookbook-viewer-fallback a{color:#174a39;font-weight:800;text-decoration:underline}
+#attendanceSummary .db-count{flex:1 1 150px;min-width:135px}
+@media(max-width:600px){.lookbook-viewer{padding:7px;margin:16px -4px}.lookbook-viewer iframe{height:70svh;min-height:500px}.lookbook-viewer-heading{display:block}.lookbook-viewer-heading span{display:block;margin-top:3px}.lookbook-actions .pill{width:100%}}
