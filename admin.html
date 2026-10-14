@@ -34,6 +34,13 @@ button:disabled{opacity:.5;cursor:wait}
 .status.error{border-color:#c66;background:#fff0ef;color:#84261c}
 .path{font-size:.9rem;color:#42594e;margin-top:5px;overflow-wrap:anywhere}
 #editors h3{border-bottom:1px solid #e2d0a9;padding-bottom:8px}
+.draft-preview{padding:16px;border:1px solid #c49a54;background:radial-gradient(ellipse at top,#285f49,#092b23 85%);color:#fff5df;position:relative;isolation:isolate;overflow:hidden}
+.draft-preview:before{content:"";position:absolute;inset:7px;border:1px solid #d8bd7a;background:url('floral-frame.svg') center/100% 100% no-repeat;z-index:-1;pointer-events:none}
+.draft-preview-inner{max-width:620px;margin:auto;padding:26px 16px;text-align:center;background:#092b23aa;border:1px solid #d8bd7a}
+.draft-preview .draft-small{font-size:.85rem;letter-spacing:.1em;text-transform:uppercase;font-weight:800}
+.draft-preview h3{margin:12px 0;color:#f5d88f;font:600 clamp(2rem,6vw,3.2rem) Georgia,serif;overflow-wrap:anywhere}
+.draft-preview p{margin:6px 0}
+
 .db-row{border:1px solid #dfc995;background:#fffdf7;padding:14px;margin:10px 0;overflow-wrap:anywhere}
 .db-row h3{margin:0 0 6px;font-size:1.08rem}
 .db-meta{font-size:.9rem;color:#52665b}
@@ -59,11 +66,16 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
   </section>
 
   <form id="contentForm">
-    <section class="card"><h2>💌 Invitation text</h2><p class="small">Edit a field and save. Your existing invitation layout and sections will remain in place.</p><div id="editors"><p class="small">Load settings using the access button above.</p></div></section>
+    <section class="card"><h2>💌 Invitation text</h2><p class="small">Edit a field and save. Your existing invitation layout and sections will remain in place.</p><div id="editors"><p class="small">Load settings using the access button above.</p></div>
+      <h3>Live draft preview</h3>
+      <p class="small">This preview updates as you type. It is a quick visual check, not a replacement for previewing the full invitation on a phone.</p>
+      <div class="draft-preview"><div class="draft-preview-inner"><div class="draft-small">Together with our families</div><h3><span id="previewBride">Shreya Arora</span><br><span style="font-size:.55em">&amp;</span><br><span id="previewGroom">Naman Dora</span></h3><p id="previewDates">13 — 14 December 2026</p><p id="previewVenue">Namaste Corbett Resort &amp; Spa · Jim Corbett</p></div></div>
+    </section>
     <section class="card">
       <h2>📷 Photos, artwork, lookbook and music</h2>
       <p class="warn">Files uploaded here become public because the invitation repository and website are public. Upload only photos and music you have permission to share. Audio uploads are limited to 8 MB in this editor.</p>
       <div class="field"><label for="photoFile">Couple photo (JPG, PNG or WebP)</label><input id="photoFile" type="file" accept="image/jpeg,image/png,image/webp"><button type="button" data-upload="photo" class="secondary">Upload and use couple photo</button><div class="path" id="photoPathText"></div></div>
+      <div class="field"><label for="backgroundTarget">Which page should use the new background?</label><select id="backgroundTarget"><option value="cover">Opening cover</option><option value="scroll">Wedding scroll / date</option><option value="photo">Couple photo story</option><option value="lookbook">Wardrobe lookbook</option><option value="family">Family page</option><option value="countdown">Countdown page</option><option value="rsvp">RSVP page</option><option value="wishes">Guest wishes page</option></select><label for="backgroundFile">Background image (JPG, PNG or WebP; max 5 MB)</label><input id="backgroundFile" type="file" accept="image/jpeg,image/png,image/webp"><button type="button" data-upload="background" class="secondary">Upload background for selected page</button><div class="path" id="backgroundPathText"></div></div>
       <div class="field"><label for="floralFile">Floral frame (SVG only)</label><input id="floralFile" type="file" accept="image/svg+xml"><button type="button" data-upload="floral" class="secondary">Upload and use floral frame</button><div class="path">Replaces the existing floral-frame.svg used by the page borders.</div></div>
       <div class="field"><label for="lookbookFile">Wardrobe lookbook (PDF)</label><input id="lookbookFile" type="file" accept="application/pdf"><button type="button" data-upload="lookbook" class="secondary">Upload and use lookbook PDF</button><div class="path" id="lookbookPathText"></div></div>
       <div class="field"><label for="musicFile">Punjabi wedding music (MP3, M4A, OGG or WAV)</label><input id="musicFile" type="file" accept="audio/mpeg,audio/mp4,audio/ogg,audio/wav,audio/x-wav"><label><input id="musicRights" type="checkbox"> I have permission or a licence to publish this audio.</label><button type="button" data-upload="music" class="secondary">Upload and set invitation music</button><div class="path" id="musicPathText"></div></div>
@@ -105,7 +117,7 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
   let token='', config={}, loaded=false, working=false;
   const groups=[
     {title:'Names and cover',keys:['brideName','groomName','coverIntro','taglineLine1','taglineLine2','weddingDates']},
-    {title:'Main wedding date and venue',keys:['weddingDay','weddingMonthYear','venueName','venueLocation']},
+    {title:'Main wedding date and venue',keys:['weddingDay','weddingMonthYear','weddingDates','weddingStartDateTime','venueName','venueLocation']},
     {title:'Family page',keys:['familyEyebrow','familyHeading','brideParents','brideGrandparents','groomParents','groomGrandparents','familyClosing']},
     {title:'Mehendi',keys:['mehendiTitle','mehendiDate','mehendiTime','mehendiVenue','mehendiDress']},
     {title:'Engagement and cocktail',keys:['engagementTitle','engagementDate','engagementTime','engagementVenue','engagementDress']},
@@ -116,7 +128,7 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
     {title:'Backend and sharing settings',keys:['supabaseUrl','supabaseAnonKey','venueMapsUrl','rsvpWhatsappNumber','previewImage']}
   ];
   const labels={
-    brideName:'Bride name',groomName:'Groom name',coverIntro:'Cover invitation text',taglineLine1:'Tagline line 1',taglineLine2:'Tagline line 2',weddingDates:'Date range on cover',weddingDay:'Wedding day number',weddingMonthYear:'Wedding month and year',venueName:'Venue name',venueLocation:'Venue location',
+    brideName:'Bride name',groomName:'Groom name',coverIntro:'Cover invitation text',taglineLine1:'Tagline line 1',taglineLine2:'Tagline line 2',weddingDates:'Date range on cover',weddingDay:'Wedding day number',weddingMonthYear:'Wedding month and year',weddingDates:'Date range on cover',weddingStartDateTime:'Countdown target (ISO date/time with India offset)',venueName:'Venue name',venueLocation:'Venue location',
     familyEyebrow:'Family page small heading',familyHeading:'Family page heading',brideParents:'Bride’s parents',brideGrandparents:'Bride’s grandparents',groomParents:'Groom’s parents',groomGrandparents:'Groom’s grandparents',familyClosing:'Family page closing text',
     mehendiTitle:'Event title',mehendiDate:'Date',mehendiTime:'Time',mehendiVenue:'Venue',mehendiDress:'Dress theme',
     engagementTitle:'Event title',engagementDate:'Date',engagementTime:'Time',engagementVenue:'Venue',engagementDress:'Dress theme',
@@ -144,6 +156,18 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
     if(!res.ok)throw new Error('Could not load site-content.json');
     config=await res.json();return config;
   }
+  function updateDraftPreview(){
+    const value=key=>document.querySelector('[data-key="'+key+'"]')?.value ?? config[key] ?? '';
+    $('previewBride').textContent=value('brideName');
+    $('previewGroom').textContent=value('groomName');
+    $('previewDates').textContent=value('weddingDates');
+    $('previewVenue').textContent=value('venueName')+' · '+value('venueLocation');
+  }
+  const backgroundConfigKey={cover:'coverBackground',scroll:'scrollBackground',photo:'photoBackground',lookbook:'lookbookBackground',family:'familyBackground',countdown:'countdownBackground',rsvp:'rsvpBackground',wishes:'wishesBackground'};
+  function updateBackgroundLabel(){
+    const target=$('backgroundTarget')?.value||'cover';
+    $('backgroundPathText').textContent='Current: '+(config[backgroundConfigKey[target]]||'Built-in cream/emerald background and floral frame');
+  }
   function renderEditor(){
     const host=$('editors');host.replaceChildren();
     groups.forEach(group=>{
@@ -168,6 +192,9 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
     $('photoPathText').textContent='Current: '+(config.photoPath||'couple-photo.jpg');
     $('lookbookPathText').textContent='Current: '+(config.lookbookPath||'lookbook-naman-shreya.pdf');
     $('musicPathText').textContent='Current: '+(config.musicPath||'Original generated dhol-style fallback');
+    updateBackgroundLabel();
+    host.querySelectorAll('[data-key]').forEach(el=>el.addEventListener('input',updateDraftPreview));
+    updateDraftPreview();
   }
   async function loadAll(){
     const data=await fetchConfig();renderEditor();loaded=true;
@@ -205,7 +232,8 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
   }
   async function upload(kind){
     if(!token)throw new Error('Check access with your GitHub token first.');
-    let file,path,limit=8*1024*1024;
+    let file,path,limit=8*1024*1024,backgroundKey='';
+
     if(kind==='photo'){
       file=$('photoFile').files[0];if(!file)throw new Error('Choose a couple photo first.');
       const ext=safeExt(file,['jpg','jpeg','png','webp']);if(file.size>limit)throw new Error('Photo must be 8 MB or smaller.');
@@ -223,6 +251,12 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
       safeExt(file,['mp3','m4a','ogg','wav']);if(file.size>8*1024*1024)throw new Error('Audio must be 8 MB or smaller.');
       if(!$('musicRights').checked)throw new Error('Confirm you have permission or a licence to publish this audio.');
       path='assets/wedding-music-'+Date.now()+'.'+file.name.split('.').pop().toLowerCase();
+    }else if(kind==='background'){
+      file=$('backgroundFile').files[0];if(!file)throw new Error('Choose a background image first.');
+      const ext=safeExt(file,['jpg','jpeg','png','webp']);if(file.size>5*1024*1024)throw new Error('Background image must be 5 MB or smaller.');
+      const target=$('backgroundTarget').value;backgroundKey=backgroundConfigKey[target];
+      if(!backgroundKey)throw new Error('Choose a valid page for the background.');
+      path='assets/background-'+target+'-'+Date.now()+'.'+(ext==='jpeg'?'jpg':ext);
     }else{throw new Error('Unknown upload type.');}
     setBusy(true);status('uploadStatus','Uploading '+file.name+'…');
     try{
@@ -230,11 +264,13 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
       if(kind==='photo')config.photoPath=path;
       if(kind==='lookbook')config.lookbookPath=path;
       if(kind==='music')config.musicPath=path;
-      if(kind!=='floral')await commitText('[admin] Set '+kind+' asset to '+path);
+      if(kind==='background')config[backgroundKey]=path;
+      if(kind!=='floral')await commitText('[admin] Set '+(kind==='background'?backgroundKey:kind)+' asset to '+path);
       renderEditor();
       status('uploadStatus','Uploaded '+file.name+' and updated the invitation settings. Commit path: '+path,'ok');
     }finally{setBusy(false);}
   }
+  $('backgroundTarget').addEventListener('change',updateBackgroundLabel);
   $('checkToken').addEventListener('click',async()=>{setBusy(true);try{await checkToken();}catch(e){status('accessStatus',e.message,'error');}finally{setBusy(false);}});
   $('clearToken').addEventListener('click',()=>{token='';$('token').value='';status('accessStatus','Token cleared from this page.','');});
   $('reloadConfig').addEventListener('click',async()=>{setBusy(true);try{await loadAll();status('saveStatus','Reloaded saved settings from the published site.','ok');}catch(e){status('saveStatus',e.message,'error');}finally{setBusy(false);}});
