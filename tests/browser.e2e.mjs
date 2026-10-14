@@ -43,6 +43,34 @@ try {
   assert.ok(scrollMetrics.scrollWidth <= scrollMetrics.clientWidth + 1, 'Scroll does not create horizontal clipping');
   assert.ok(scrollMetrics.scrollHeight <= scrollMetrics.clientHeight + 2, 'Expanded scroll content is not clipped');
   assert.equal(await page.locator('html').evaluate(el => el.scrollWidth <= window.innerWidth + 1), true, 'Whole page has no horizontal overflow');
+  // Verify closing and reopening the scroll does not trap its content on touch devices.
+  await page.locator('#pullScroll').click();
+  await page.waitForFunction(() => {
+    const p = document.querySelector('#scrollPaper');
+    return p && !p.classList.contains('open') && p.style.maxHeight === '0px';
+  });
+  await page.locator('#pullScroll').click();
+  await page.waitForFunction(() => {
+    const p = document.querySelector('#scrollPaper');
+    return p && p.classList.contains('open') && p.getBoundingClientRect().height > 300;
+  });
+  await page.waitForTimeout(900);
+  assert.match(await page.locator('#scrollPaper').innerText(), /The Royal Wedding/);
+
+  // Tablet and laptop widths: no horizontal overflow and all event cards remain in layout.
+  for (const viewport of [{ width: 768, height: 1024 }, { width: 1440, height: 900 }]) {
+    await page.setViewportSize(viewport);
+    await page.waitForTimeout(100);
+    const metrics = await page.evaluate(() => ({
+      width: window.innerWidth,
+      documentWidth: document.documentElement.scrollWidth,
+      cards: document.querySelectorAll('#dateSection .events .event').length
+    }));
+    assert.ok(metrics.documentWidth <= metrics.width + 1, 'No horizontal overflow at viewport ' + viewport.width);
+    assert.equal(metrics.cards, 4, 'All ceremony cards remain present at viewport ' + viewport.width);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+
 
   const music = page.locator('#musicBtn');
   if (await music.getAttribute('aria-pressed') === 'true') await music.click();
@@ -78,7 +106,7 @@ try {
   assert.equal(await page.locator('#dbLogin').isVisible(), true, 'Admin guest database panel is available');
 
   assert.deepEqual(errors, [], 'No uncaught JavaScript page errors');
-  console.log('PASS: mobile viewport, page flow, all ceremony cards, scroll expansion, audio controls, RSVP/wish fallback, venue, PDF, share UI and admin panel.');
+  console.log('PASS: mobile/tablet/laptop layouts, scroll open-close-reopen, all ceremony cards, audio controls, RSVP/wish fallback, venue, PDF, WhatsApp share UI and admin panel.');
   console.log('Scroll metrics:', JSON.stringify(scrollMetrics));
 } finally {
   await browser.close();
