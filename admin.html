@@ -101,8 +101,8 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
     <div class="actions">
       <button type="button" id="dbLogin">Sign in to guest dashboard</button>
       <button type="button" id="dbRefresh" class="secondary">Refresh submissions</button>
-      <button type="button" id="dbExportRsvps" class="secondary">Export RSVPs CSV</button>
-      <button type="button" id="dbExportNotes" class="secondary">Export wishes CSV</button>
+      <button type="button" id="dbExportRsvps" class="secondary">Download guest list Excel (.xlsx)</button>
+      <button type="button" id="dbExportNotes" class="secondary">Download wishes Excel (.xlsx)</button>
       <button type="button" id="dbLogout" class="secondary">Sign out of database</button>
     </div>
     <div class="status" id="dbStatus" role="status">Database not signed in.</div>
@@ -114,12 +114,13 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
       <div class="db-count" id="attendeeCount">Expected guests: —</div>
       <div class="db-count" id="noteCount">Wishes: —</div>
     </div>
-    <p class="small" id="submissionDisplayNote">Sign in to calculate totals from saved responses. The dashboard shows the latest 250 records per list; CSV exports include all saved records.</p>
+    <p class="small" id="submissionDisplayNote">Sign in to calculate totals from saved responses. The dashboard shows the latest 250 records per list; Excel exports include all saved records.</p>
     <h3>Wedding RSVPs</h3><div id="rsvpRecords"><p class="small">Sign in to view the private guest list.</p></div>
     <h3>Guest wishes</h3><div id="noteRecords"><p class="small">Sign in to view private wishes.</p></div>
   </section>
 </main>
 <footer>Shreya &amp; Naman · Invitation administration</footer>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 <script>
 (function(){
   'use strict';
@@ -391,7 +392,7 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
     $('maybeCount').textContent='Maybe: '+unsure.length;
     $('attendeeCount').textContent='Expected guests: '+expectedGuests;
     $('noteCount').textContent='Wishes: '+latestNotes.length;
-    $('submissionDisplayNote').textContent='Summary totals cover all '+latestRsvps.length+' RSVP response(s) and '+latestNotes.length+' wish(es). The latest 250 records are shown below; CSV exports include all records.';
+    $('submissionDisplayNote').textContent='Summary totals cover all '+latestRsvps.length+' RSVP response(s) and '+latestNotes.length+' wish(es). The latest 250 records are shown below; Excel exports include all records.';
     renderSubmissions($('rsvpRecords'),latestRsvps.slice(0,250),'rsvp');
     renderSubmissions($('noteRecords'),latestNotes.slice(0,250),'note');
     status('dbStatus','Private guest submissions loaded. Only an allow-listed admin can query these records.','ok');
@@ -402,6 +403,22 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
     const csv=[fields.join(','),...rows.map(row=>fields.map(key=>escape(row[key])).join(','))].join(String.fromCharCode(13,10));
     const blob=new Blob([String.fromCharCode(0xFEFF),csv],{type:'text/csv;charset=utf-8;'});
     const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url);
+  }
+  function exportExcel(rows,fields,filename,sheetName){
+    if(!rows.length){status('dbStatus','There are no records to export yet.','error');return;}
+    if(!window.XLSX){
+      exportCsv(rows,fields,filename.replace('.xlsx','.csv'));
+      status('dbStatus','Excel library could not load; an Excel-compatible CSV was downloaded instead. Retry for an .xlsx workbook.','error');
+      return;
+    }
+    const safeRows=rows.map(row=>Object.fromEntries(fields.map(key=>[key,row[key]??''])));
+    const workbook=window.XLSX.utils.book_new();
+    const worksheet=window.XLSX.utils.json_to_sheet(safeRows,{header:fields});
+    worksheet['!autofilter']={ref:worksheet['!ref']};
+    worksheet['!freeze']={xSplit:0,ySplit:1};
+    window.XLSX.utils.book_append_sheet(workbook,worksheet,sheetName);
+    window.XLSX.writeFile(workbook,filename);
+    status('dbStatus',rows.length+' record(s) exported to '+filename+'.','ok');
   }
   $('dbLogin').addEventListener('click',async()=>{
     const db=safeDbConfig(),email=$('dbEmail').value.trim(),password=$('dbPassword').value;
@@ -418,8 +435,8 @@ footer{text-align:center;color:#5f6e64;font-size:.9rem;padding:15px}
   });
   $('dbRefresh').addEventListener('click',async()=>{if(working)return;setBusy(true);try{await loadSubmissions();}catch(e){status('dbStatus',e.message,'error');}finally{setBusy(false);}});
   $('dbLogout').addEventListener('click',()=>{dbSession=null;latestRsvps=[];latestNotes=[];$('rsvpRecords').textContent='Signed out.';$('noteRecords').textContent='Signed out.';$('rsvpCount').textContent='RSVPs: —';$('noteCount').textContent='Wishes: —';status('dbStatus','Signed out of the guest database.','');});
-  $('dbExportRsvps').addEventListener('click',()=>exportCsv(latestRsvps,['created_at','full_name','email','phone','attendance','guest_count','message'],'shreya-naman-rsvps.csv'));
-  $('dbExportNotes').addEventListener('click',()=>exportCsv(latestNotes,['created_at','sender_name','message','approved'],'shreya-naman-wishes.csv'));
+  $('dbExportRsvps').addEventListener('click',()=>exportExcel(latestRsvps,['created_at','full_name','email','phone','attendance','guest_count','message'],'shreya-naman-rsvps.xlsx','Guest RSVPs'));
+  $('dbExportNotes').addEventListener('click',()=>exportExcel(latestNotes,['created_at','sender_name','message','approved'],'shreya-naman-wishes.xlsx','Guest Wishes'));
 
   loadAll().catch(e=>status('accessStatus','Could not load public settings: '+e.message,'error'));
 })();
