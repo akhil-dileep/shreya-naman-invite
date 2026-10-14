@@ -102,7 +102,7 @@ try {
   await page.locator('#wish').fill('Wishing you both a beautiful life together.');
   await page.locator('#submitWish').click();
   await page.waitForFunction(() => document.querySelector('#toast')?.innerText.length > 0);
-  assert.match(await page.locator('#toast').innerText(), /not saved to the private guestbook|saved privately/i, 'Wish reports truthful save/fallback status');
+  assert.match(await page.locator('#toast').innerText(), /could not be sent|wish has been sent|saved privately/i, 'Wish reports truthful save/fallback status');
 
   await page.locator('#venueDirections').waitFor({ state: 'attached' });
   await page.locator('#lookbookPdfLink').waitFor({ state: 'attached' });
