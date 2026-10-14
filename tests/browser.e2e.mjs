@@ -100,24 +100,21 @@ try {
   assert.match(await page.locator('#toast').innerText(), /could not be sent|wish has been received/i, 'Wish reports truthful save/fallback status');
 
   await page.locator('#venueDirections').waitFor({ state: 'attached' });
-  await page.locator('#lookbookPdfLink').waitFor({ state: 'attached' });
-  await page.locator('#lookbookDownloadLink').waitFor({ state: 'attached' });
   await page.locator('#shareInvite').waitFor({ state: 'visible' });
   await page.locator('a[href="#photoSection"]').first().click();
   await page.locator('#photoSection').waitFor({ state: 'visible' });
   await page.locator('a[href="#lookbookSection"]').first().click();
   await page.locator('#lookbookSection').waitFor({ state: 'visible' });
-  assert.equal(await page.locator('#toggleLookbookPreview').count(),0,'No embedded PDF preview is shown');
-  assert.equal(await page.locator('#lookbookPdfPreview').count(),0,'No cropped in-page PDF container exists');
-  assert.equal(await page.locator('#lookbookPdfLink').innerText(),'View lookbook PDF ↗');
-  assert.equal(await page.locator('#lookbookDownloadLink').isVisible(),true,'PDF download remains available');
-  assert.equal(await page.locator('#lookbookSection .events [data-calendar-event]').count(),4,'Every colour-theme card has an add-to-calendar action');
-  assert.equal(await page.locator('#dateSection .events [data-calendar-event]').count(),4,'Every ceremony card has an add-to-calendar action');
+  assert.equal(await page.locator('#lookbookPdfLink').count(),0,'Wardrobe section no longer repeats the PDF');
+  assert.equal(await page.locator('#lookbookDownloadLink').count(),0,'Wardrobe section no longer repeats PDF download');
+  assert.equal(await page.locator('#lookbookSection [data-calendar-event]').count(),0,'Wardrobe section has no calendar buttons');
+  assert.equal(await page.locator('#lookbookSection .events article').count(),4,'Wardrobe section retains only four concise outfit palette cards');
+  assert.equal(await page.locator('#dateSection .events [data-calendar-event]').count(),4,'Calendar actions remain on the wedding-scroll ceremony cards');
   assert.equal(await page.locator('#addAllCalendar').isVisible(),true,'Guests can download one calendar file for all events');
   assert.equal(await page.locator('#copyWish').count(),0,'Redundant copy-wish action is removed');
   assert.equal(await page.locator('#messageSection .tiny').count(),0,'Redundant wish privacy disclaimer is removed');
   for(const venue of ['The Emerald Lawns','The Starlit Banquet','The Azure Poolside','The Grand Regal Mandap']) {
-    assert.ok((await page.locator('#lookbookSection').innerText()).includes(venue),'Lookbook card shows confirmed venue '+venue);
+    assert.ok((await page.locator('#dateSection').innerText()).includes(venue),'Official venue remains on wedding scroll: '+venue);
   }
 
   await page.goto('http://127.0.0.1:4173/admin.html', { waitUntil: 'networkidle' });
