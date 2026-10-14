@@ -99,7 +99,7 @@
     if(!base||!key)throw new Error('Guest database is not configured yet.');
     const response=await fetch(base+'/rest/v1/'+table,{
       method:'POST',
-      headers:{'apikey':key,'Authorization':'Bearer '+key,'Content-Type':'application/json','Prefer':'return=minimal'},
+      headers:{'apikey':key,'Content-Type':'application/json','Prefer':'return=minimal'},
       body:JSON.stringify(payload)
     });
     if(!response.ok){
