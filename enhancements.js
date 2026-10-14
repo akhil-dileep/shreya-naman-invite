@@ -27,10 +27,19 @@
     @media(max-width:600px){.extra-section{padding:20px 12px}.extra-card{padding:22px 15px}.family-grid{grid-template-columns:1fr}.count-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.family-item{padding:14px}.extra-card p,.extra-card label,.family-item p{font-size:1.02rem}.invite-rsvp-link{width:100%}}
   `;
   document.head.appendChild(pageCss);
+  pageCss.textContent += `
+    .floral-garland{font-size:clamp(1.25rem,3.5vw,2rem);letter-spacing:.14em;margin:-4px 0 14px;filter:drop-shadow(0 2px 2px #9b734133)}
+    .family-card{background-image:linear-gradient(rgba(255,249,233,.68),rgba(255,243,220,.74)),url('floral-frame.svg')!important;background-position:center!important;background-size:cover!important;border:2px solid #c49a54!important}
+    .family-item{position:relative;background:rgba(255,251,241,.92)!important;padding:18px 15px!important;box-shadow:0 3px 16px #7d553215}
+    .family-icon{font-size:2.2rem;line-height:1.2;margin-bottom:8px}
+    .family-item p{white-space:pre-line}
+    .bride-family{border-top:4px solid #d99b9d}
+    .groom-family{border-top:4px solid #4c8369}
+`;
 
   const family=document.createElement('section');
   family.id='familySection';family.className='extra-section hidden';
-  family.innerHTML=`<div class="extra-card reveal"><div class="eyebrow">With blessings from our families</div><h2 class="extra-title">With love from both families</h2><div class="family-grid"><article class="family-item"><h3>Shreya Arora</h3><p>Daughter of</p><p>Mr. Rajesh Arora &amp;<br>Mrs. Meenakshi Arora</p><p><em>Granddaughter of</em></p><p>Late Mr. Rajinder Mohan &amp;<br>Mrs. Darshana Devi</p></article><article class="family-item"><h3>Naman Dora</h3><p>Son of</p><p>Mr. Praveen Dora &amp;<br>Mrs. Reena Dora</p><p><em>Grandson of</em></p><p>Mr. Sitaram Dora &amp;<br>Mrs. Shakuntala Dora</p></article></div><p>We are delighted to share this special journey with you.</p><button class="pill" id="familyContinue">Continue ↓</button></div>`;
+  family.innerHTML=`<div class="extra-card reveal family-card"><div class="floral-garland" aria-hidden="true">🌼 ❀ 🌿 🌸 🌿 ❀ 🌼</div><div class="eyebrow" data-content="familyEyebrow">With blessings from our families</div><h2 class="extra-title" data-content="familyHeading">With love from both families</h2><div class="family-grid"><article class="family-item bride-family"><div class="family-icon" aria-hidden="true">👰🏻‍♀️</div><h3 data-content="brideName">Shreya Arora</h3><p>💐 Daughter of</p><p data-content="brideParents">Mr. Rajesh Arora &amp; Mrs. Meenakshi Arora</p><p><em>🌷 Granddaughter of</em></p><p data-content="brideGrandparents">Late Mr. Rajinder Mohan &amp; Mrs. Darshana Devi</p></article><article class="family-item groom-family"><div class="family-icon" aria-hidden="true">🤵🏻</div><h3 data-content="groomName">Naman Dora</h3><p>💐 Son of</p><p data-content="groomParents">Mr. Praveen Dora &amp; Mrs. Reena Dora</p><p><em>🌷 Grandson of</em></p><p data-content="groomGrandparents">Mr. Sitaram Dora &amp; Mrs. Shakuntala Dora</p></article></div><p data-content="familyClosing">We are delighted to share this special journey with you.</p><button class="pill" id="familyContinue">Continue to the countdown ↓</button></div>`;
   $('cover').insertAdjacentElement('afterend',family);
 
   const countdown=document.createElement('section');
@@ -58,6 +67,7 @@
   tick();setInterval(tick,1000);
 
   function reveal(id){const el=$(id);if(el){el.classList.remove('hidden');el.scrollIntoView({behavior:'smooth',block:'start'});}}
+  $('openSeal')?.addEventListener('click',()=>{ if(typeof window.startMusic==='function') window.startMusic(); reveal('familySection'); });
   $('familyContinue')?.addEventListener('click',()=>reveal('countdownSection'));
   $('countdownContinue')?.addEventListener('click',()=>reveal('dateSection'));
 
