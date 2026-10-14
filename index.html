@@ -328,8 +328,6 @@ window.inviteConfigPromise = (async function(){
       const link=document.getElementById(id);
       if(link)link.href=lookbookPath;
     });
-    const previewFrame=document.getElementById('lookbookPdfFrame');
-    if(previewFrame)previewFrame.dataset.src=lookbookPath+'#view=FitH';
     const directions = document.getElementById('venueDirections');
     if (directions && cfg.venueMapsUrl) directions.href = cfg.venueMapsUrl;
     const shareImage = document.querySelector('meta[property="og:image"]');
