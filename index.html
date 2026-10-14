@@ -127,7 +127,16 @@ strong{font-weight:800}
  <div class="frame reveal">
   <div class="eyebrow">Dress up for the celebrations</div><h2 class="script section-title" data-content="lookbookHeading">The Wardrobe Lookbook</h2>
   <p style="font-size:1.2rem"><span data-content="lookbookIntro">A little colour inspiration for each celebration. These palettes are a guide — wear what feels most comfortable to you.</span></p>
-  <a class="pill lookbook-link" id="lookbookPdfLink" href="lookbook-naman-shreya.pdf" target="_blank" rel="noopener">✦ <span data-content="lookbookButton">View the colour theme for each occasion</span></a>
+  <div class="lookbook-actions" aria-label="Lookbook viewing options">
+   <button type="button" class="pill lookbook-link" id="toggleLookbookPreview" aria-expanded="false" aria-controls="lookbookPdfPreview">✦ Preview all 6 pages here ↓</button>
+   <a class="pill lookbook-link" id="lookbookPdfLink" href="lookbook-naman-shreya.pdf" target="_blank" rel="noopener noreferrer">Open full PDF ↗</a>
+   <a class="pill lookbook-link" id="lookbookDownloadLink" href="lookbook-naman-shreya.pdf" download="Naman-and-Shreya-Wedding-Lookbook.pdf">Download PDF ↓</a>
+  </div>
+  <div id="lookbookPdfPreview" class="lookbook-viewer hidden" hidden>
+   <div class="lookbook-viewer-heading"><strong>Wardrobe Lookbook · 6 pages</strong><span>Scroll inside the preview to browse each occasion.</span></div>
+   <iframe id="lookbookPdfFrame" title="Naman and Shreya's six-page wedding wardrobe lookbook" data-src="lookbook-naman-shreya.pdf#view=FitH" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+   <p class="lookbook-viewer-fallback">If your browser doesn't show the embedded preview, use <a href="lookbook-naman-shreya.pdf" target="_blank" rel="noopener noreferrer">Open full PDF</a> or <a href="lookbook-naman-shreya.pdf" download="Naman-and-Shreya-Wedding-Lookbook.pdf">download it</a>.</p>
+  </div>
   <div class="events">
    <article class="event"><h3>Mehendi</h3><p>Festive &amp; Indo-Western</p><p>Greens · Olive · Gold</p></article>
    <article class="event"><h3>Engagement &amp; Cocktail</h3><p>Evening glamour</p><p>Rose · Burgundy · Emerald</p></article>
@@ -165,6 +174,17 @@ strong{font-weight:800}
 const $=id=>document.getElementById(id);
 const sections=['dateSection','photoSection','lookbookSection','messageSection'];
 $('openSeal').addEventListener('click',()=>{ startMusic(); const family=$('familySection'); if(family){family.classList.remove('hidden');family.scrollIntoView({behavior:'smooth',block:'start'});}else{$('dateSection').classList.remove('hidden');$('dateSection').scrollIntoView({behavior:'smooth',block:'start'});} $('openSeal').textContent='✦'; $('openSeal').disabled=true; });
+const lookbookToggle=$('toggleLookbookPreview');
+lookbookToggle?.addEventListener('click',()=>{
+ const viewer=$('lookbookPdfPreview'),frame=$('lookbookPdfFrame');
+ const opening=viewer.classList.contains('hidden');
+ viewer.classList.toggle('hidden',!opening);
+ viewer.hidden=!opening;
+ lookbookToggle.setAttribute('aria-expanded',String(opening));
+ lookbookToggle.textContent=opening?'Hide lookbook preview ↑':'Preview all 6 pages here ↓';
+ if(opening&&frame&&!frame.dataset.loaded){frame.src=frame.dataset.src;frame.dataset.loaded='true';}
+ if(opening)viewer.scrollIntoView({behavior:'smooth',block:'start'});
+});
 $('pullScroll').addEventListener('click',()=>{
  const p=$('scrollPaper'),button=$('pullScroll'),opening=!p.classList.contains('open');
  if(opening){
