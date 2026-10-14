@@ -121,3 +121,11 @@ input,select,textarea{font-size:16px!important}
 .lookbook-viewer-fallback a{color:#174a39;font-weight:800;text-decoration:underline}
 #attendanceSummary .db-count{flex:1 1 150px;min-width:135px}
 @media(max-width:600px){.lookbook-viewer{padding:7px;margin:16px -4px}.lookbook-viewer iframe{height:70svh;min-height:500px}.lookbook-viewer-heading{display:block}.lookbook-viewer-heading span{display:block;margin-top:3px}.lookbook-actions .pill{width:100%}}
+
+/* Calendar actions for the ceremony schedule. */
+.calendar-actions{margin:18px auto 14px;text-align:center}
+.calendar-actions .pill{margin:0 auto 8px;max-width:100%}
+.calendar-actions .tiny{margin:0 auto 10px;max-width:620px}
+.event-calendar{margin:8px auto 0!important;font-size:.96rem!important;padding:10px 16px!important;max-width:100%}
+.event .event-calendar{display:inline-flex;align-items:center;justify-content:center}
+@media(max-width:600px){.calendar-actions .pill,.event-calendar{width:100%;white-space:normal}.calendar-actions .tiny{font-size:.86rem}}
