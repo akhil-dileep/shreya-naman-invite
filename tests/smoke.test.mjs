@@ -49,8 +49,8 @@ assert.match(admin,/draft-preview/,'Admin includes a draft preview before publis
 assert.match(admin,/backgroundTarget/,'Admin can upload per-page backgrounds');
 assert.match(admin,/musicPreview/,'Admin can preview an audio file before publishing');
 assert.match(admin,/weddingStartDateTime/,'Admin can adjust the countdown target');
-assert.match(admin,/Download guest list Excel \\(\.xlsx\\\)/,'Admin can export guest RSVPs to Excel');
-assert.match(admin,/Download wishes Excel \\(\.xlsx\\\)/,'Admin can export guest wishes to Excel');
+assert.ok(admin.includes('Download guest list Excel (.xlsx)'),'Admin can export guest RSVPs to Excel');
+assert.ok(admin.includes('Download wishes Excel (.xlsx)'),'Admin can export guest wishes to Excel');
 assert.match(admin,/function exportExcel/,'Admin creates real Excel workbooks when the workbook library is available');
 for(const id of ['acceptCount','declineCount','maybeCount','attendeeCount','submissionDisplayNote']) assert.ok(admin.includes('id="'+id+'"')||admin.includes("id='"+id+"'"),'Admin shows RSVP summary '+id);
 assert.match(js,/<option value="20">20<\/option>/,'RSVP can record exact counts up to the database limit');
