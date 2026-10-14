@@ -296,6 +296,27 @@ window.inviteConfigPromise = (async function(){
     if (directions && cfg.venueMapsUrl) directions.href = cfg.venueMapsUrl;
     const shareImage = document.querySelector('meta[property="og:image"]');
     if (shareImage && cfg.previewImage) shareImage.content = new URL(cfg.previewImage, window.location.href).href;
+    const bgSpecs = [
+      ['coverBackground','cover','linear-gradient(rgba(7,45,34,.68),rgba(4,28,22,.76))'],
+      ['scrollBackground','dateSection','linear-gradient(rgba(255,247,228,.80),rgba(255,240,211,.84))'],
+      ['photoBackground','photoSection','linear-gradient(rgba(9,43,35,.78),rgba(9,43,35,.86))'],
+      ['lookbookBackground','lookbookSection','linear-gradient(rgba(255,247,228,.77),rgba(255,240,211,.84))'],
+      ['familyBackground','familySection','linear-gradient(rgba(255,249,233,.80),rgba(255,243,220,.86))'],
+      ['countdownBackground','countdownSection','linear-gradient(rgba(255,249,233,.82),rgba(255,243,220,.86))'],
+      ['rsvpBackground','rsvpSection','linear-gradient(rgba(9,43,35,.82),rgba(9,43,35,.90))'],
+      ['wishesBackground','messageSection','linear-gradient(rgba(9,43,35,.80),rgba(9,43,35,.90))']
+    ];
+    bgSpecs.forEach(function(spec){
+      const el=document.getElementById(spec[1]), path=cfg[spec[0]];
+      if(!el||!path)return;
+      try{
+        const imageUrl=new URL(path,window.location.href).href.replace(/"/g,'%22');
+        el.style.backgroundImage=spec[2]+', url("'+imageUrl+'")';
+        el.style.backgroundPosition='center';
+        el.style.backgroundSize='cover';
+        el.style.backgroundAttachment='scroll';
+      }catch(_){}
+    });
     return cfg;
   } catch (error) {
     console.warn('Invitation settings fallback:', error);
