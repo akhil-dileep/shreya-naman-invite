@@ -94,10 +94,11 @@
   }
   addRsvpLink($('scrollPaper'),'Kindly RSVP · Reply to the invitation');
   addRsvpLink($('photoSection')?.querySelector('.frame'),'Kindly RSVP for the celebrations');
-  addRsvpLink($('lookbookSection')?.querySelector('.frame'),'Kindly RSVP · Respond here');
   document.addEventListener('click',ev=>{
-    const link=ev.target.closest('a[href="#rsvpSection"]');if(!link)return;
-    ev.preventDefault();reveal('rsvpSection');
+    const rsvpLink=ev.target.closest('a[href="#rsvpSection"]');
+    if(rsvpLink){ev.preventDefault();reveal('rsvpSection');return;}
+    const wishLink=ev.target.closest('a[href="#messageSection"]');
+    if(wishLink){ev.preventDefault();reveal('messageSection');}
   });
 
   async function insertPrivateRecord(table, payload){

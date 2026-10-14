@@ -105,10 +105,16 @@ try {
   await page.locator('#photoSection').waitFor({ state: 'visible' });
   await page.locator('a[href="#lookbookSection"]').first().click();
   await page.locator('#lookbookSection').waitFor({ state: 'visible' });
-  assert.equal(await page.locator('#lookbookPdfLink').count(),0,'Wardrobe section no longer repeats the PDF');
-  assert.equal(await page.locator('#lookbookDownloadLink').count(),0,'Wardrobe section no longer repeats PDF download');
+  assert.equal(await page.locator('#lookbookSection a[href="lookbook-naman-shreya.pdf"][target="_blank"]').count(),1,'Wardrobe offers a view link to the detailed PDF');
+  assert.equal(await page.locator('#lookbookSection a[href="lookbook-naman-shreya.pdf"][download]').count(),1,'Wardrobe offers a PDF download link');
   assert.equal(await page.locator('#lookbookSection [data-calendar-event]').count(),0,'Wardrobe section has no calendar buttons');
   assert.equal(await page.locator('#lookbookSection .events article').count(),4,'Wardrobe section retains only four concise outfit palette cards');
+  assert.equal(await page.locator('#openRsvpForm').count(),1,'Wardrobe has one clear RSVP form button');
+  assert.equal(await page.locator('#openWishForm').count(),1,'Wardrobe has one clear wishes form button');
+  await page.locator('#openRsvpForm').click();
+  await page.locator('#rsvpSection').waitFor({ state: 'visible' });
+  await page.locator('#openWishForm').click();
+  await page.locator('#messageSection').waitFor({ state: 'visible' });
   assert.equal(await page.locator('#dateSection .events [data-calendar-event]').count(),4,'Calendar actions remain on the wedding-scroll ceremony cards');
   assert.equal(await page.locator('#addAllCalendar').isVisible(),true,'Guests can download one calendar file for all events');
   assert.equal(await page.locator('#copyWish').count(),0,'Redundant copy-wish action is removed');
@@ -192,11 +198,13 @@ try {
   assert.equal(await dbPage.locator('#declineCount').innerText(),'Declined: 0','Admin counts declined parties');
   assert.equal(await dbPage.locator('#maybeCount').innerText(),'Maybe: 0','Admin counts tentative parties');
   assert.equal(await dbPage.locator('#attendeeCount').innerText(),'Expected guests: 2','Admin sums party sizes for accepted RSVPs');
-  const [csvDownload]=await Promise.all([dbPage.waitForEvent('download'),dbPage.locator('#dbExportRsvps').click()]);
-  assert.equal(csvDownload.suggestedFilename(),'shreya-naman-rsvps.csv','Admin can export RSVP CSV');
+  const [guestDownload]=await Promise.all([dbPage.waitForEvent('download'),dbPage.locator('#dbExportRsvps').click()]);
+  assert.ok(['shreya-naman-rsvps.xlsx','shreya-naman-rsvps.csv'].includes(guestDownload.suggestedFilename()),'Admin exports the guest list as Excel, with CSV fallback if the workbook library is unavailable');
+  const [wishesDownload]=await Promise.all([dbPage.waitForEvent('download'),dbPage.locator('#dbExportNotes').click()]);
+  assert.ok(['shreya-naman-wishes.xlsx','shreya-naman-wishes.csv'].includes(wishesDownload.suggestedFilename()),'Admin exports wishes separately as Excel, with CSV fallback if needed');
 
   assert.deepEqual(errors, [], 'No uncaught JavaScript page errors'); 
-  console.log('PASS: mobile/tablet/laptop layouts, scroll open-close-reopen, audio controls, WhatsApp share, venue/PDF, RSVP/wish fallback and success paths, mock admin login, guest dashboard and CSV export.');
+  console.log('PASS: mobile/tablet/laptop layouts, scroll open-close-reopen, audio controls, WhatsApp share, venue/PDF, RSVP/wish fallback and success paths, mock admin login, guest dashboard and separate Excel exports.');
   console.log('Scroll metrics:', JSON.stringify(scrollMetrics));
 } finally {
   await browser.close();
