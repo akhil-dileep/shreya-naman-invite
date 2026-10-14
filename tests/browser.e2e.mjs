@@ -192,11 +192,13 @@ try {
   assert.equal(await dbPage.locator('#declineCount').innerText(),'Declined: 0','Admin counts declined parties');
   assert.equal(await dbPage.locator('#maybeCount').innerText(),'Maybe: 0','Admin counts tentative parties');
   assert.equal(await dbPage.locator('#attendeeCount').innerText(),'Expected guests: 2','Admin sums party sizes for accepted RSVPs');
-  const [csvDownload]=await Promise.all([dbPage.waitForEvent('download'),dbPage.locator('#dbExportRsvps').click()]);
-  assert.equal(csvDownload.suggestedFilename(),'shreya-naman-rsvps.csv','Admin can export RSVP CSV');
+  const [guestDownload]=await Promise.all([dbPage.waitForEvent('download'),dbPage.locator('#dbExportRsvps').click()]);
+  assert.ok(['shreya-naman-rsvps.xlsx','shreya-naman-rsvps.csv'].includes(guestDownload.suggestedFilename()),'Admin exports the guest list as Excel, with CSV fallback if the workbook library is unavailable');
+  const [wishesDownload]=await Promise.all([dbPage.waitForEvent('download'),dbPage.locator('#dbExportNotes').click()]);
+  assert.ok(['shreya-naman-wishes.xlsx','shreya-naman-wishes.csv'].includes(wishesDownload.suggestedFilename()),'Admin exports wishes separately as Excel, with CSV fallback if needed');
 
   assert.deepEqual(errors, [], 'No uncaught JavaScript page errors'); 
-  console.log('PASS: mobile/tablet/laptop layouts, scroll open-close-reopen, audio controls, WhatsApp share, venue/PDF, RSVP/wish fallback and success paths, mock admin login, guest dashboard and CSV export.');
+  console.log('PASS: mobile/tablet/laptop layouts, scroll open-close-reopen, audio controls, WhatsApp share, venue/PDF, RSVP/wish fallback and success paths, mock admin login, guest dashboard and separate Excel exports.');
   console.log('Scroll metrics:', JSON.stringify(scrollMetrics));
 } finally {
   await browser.close();
