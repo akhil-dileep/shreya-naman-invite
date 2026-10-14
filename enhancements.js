@@ -23,6 +23,54 @@
   `;
   document.head.appendChild(style);
 
+  /* Responsive fixes: prevent the long scroll from clipping and make every section flow naturally. */
+  const responsiveStyle = document.createElement('style');
+  responsiveStyle.textContent = `
+    html { scroll-behavior: smooth; scroll-padding-top: 16px; }
+    body { overflow-x: hidden; }
+    .screen, .extra-section { min-height: 100svh; height: auto; overflow: visible; }
+    .screen { padding-top: clamp(20px, 4vh, 42px); padding-bottom: clamp(20px, 4vh, 42px); }
+    .scroll-paper { max-height: 0; overflow: hidden; transition: max-height 1.1s ease, padding 1.1s ease; }
+    .scroll-paper.open { max-height: 20000px; overflow: visible; padding: clamp(18px, 4vw, 32px) clamp(14px, 4vw, 24px); }
+    .scroll-wrap { width: min(100%, 760px); margin: auto; }
+    .paper .frame, .photo-section .frame, .note .frame { width: min(100%, 760px); }
+    .events { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .event { min-width: 0; overflow-wrap: anywhere; }
+    .event p { line-height: 1.45; }
+    .pill, .pull, button { min-height: 44px; touch-action: manipulation; }
+    .pill { white-space: normal; max-width: 100%; }
+    .scratchbox { max-width: min(100%, 440px); }
+    .scratchbox canvas { touch-action: none; }
+    .extra-section { scroll-margin-top: 12px; }
+    .extra-card { min-width: 0; overflow-wrap: anywhere; }
+    .extra-title { line-height: 1.12; }
+    .family-item, .count-item { min-width: 0; overflow-wrap: anywhere; }
+    .rsvp-form input, .rsvp-form select, .note textarea { font-size: 16px; max-width: 100%; }
+    .music { bottom: max(14px, env(safe-area-inset-bottom)); }
+    @media (max-width: 600px) {
+      .screen { padding: 18px 12px; }
+      .frame { width: 100%; padding: 22px 16px; }
+      .events { grid-template-columns: 1fr; }
+      .scroll-paper.open { max-height: 20000px; padding: 20px 14px; }
+      .scroll-paper, .scroll-paper * { overflow-wrap: anywhere; }
+      .family-grid { grid-template-columns: 1fr; }
+      .count-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .family-item { padding: 14px; }
+      .extra-section { padding: 22px 12px; }
+      .extra-card { padding: 22px 16px; }
+      .scratchbox { width: 100%; }
+      .music { right: 10px; bottom: max(10px, env(safe-area-inset-bottom)); }
+    }
+    @media (min-width: 900px) {
+      .screen { padding-left: 28px; padding-right: 28px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+    }
+  `;
+  document.head.appendChild(responsiveStyle);
+
+
   const cover = $('cover');
   if (!cover || $('familySection')) return;
   const family = document.createElement('section');
