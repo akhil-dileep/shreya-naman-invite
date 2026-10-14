@@ -184,21 +184,20 @@ const calendarEvents=[
  {id:'wedding',start:'2026-12-14T16:00:00+05:30',end:'2026-12-14T20:00:00+05:30',titleId:'weddingTitle',venueId:'weddingVenue',dressId:'weddingRituals',fallbackTitle:'The Royal Wedding'}
 ];
 function calendarText(id,fallback){return $(id)?.textContent?.trim()||fallback;}
-function calendarDateParts(iso){
- const d=new Date(iso);
- return {date:d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z'),google:d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z')};
-}
-function calendarLocalParts(iso){
+function calendarUtcParts(iso){
  const d=new Date(iso);
  return d.toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
 }
+function calendarGoogleParts(iso){
+ return iso.slice(0,19).replace(/[-:]/g,'');
+}
 function calendarDescription(event){
  const details=event.dressId?calendarText(event.dressId,''):'';
- return ['Shreya & Naman Wedding Celebrations',details,'13–14 December 2026','Namaste Corbett Resort & Spa'].filter(Boolean).join('\\n');
+ return ['Shreya & Naman Wedding Celebrations',details,'13–14 December 2026','Namaste Corbett Resort & Spa'].filter(Boolean).join('\n');
 }
 function googleCalendarUrl(event){
  const title=calendarText(event.titleId,event.fallbackTitle);
- const start=calendarLocalParts(event.start),end=calendarLocalParts(event.end);
+ const start=calendarGoogleParts(event.start),end=calendarGoogleParts(event.end);
  const location='Namaste Corbett Resort & Spa, Jim Corbett, Uttarakhand';
  const params=new URLSearchParams({action:'TEMPLATE',text:title,dates:start+'/'+end,ctz:'Asia/Kolkata',details:calendarDescription(event),location});
  return 'https://calendar.google.com/calendar/render?'+params.toString();
@@ -208,10 +207,10 @@ function downloadCalendarFile(events){
  const now=new Date().toISOString().replace(/[-:]/g,'').replace(/\.\d{3}Z$/,'Z');
  const lines=['BEGIN:VCALENDAR','VERSION:2.0','PRODID:-//Shreya and Naman//Wedding Invitation//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH'];
  events.forEach(event=>{
-  lines.push('BEGIN:VEVENT','UID:'+event.id+'-'+event.start.slice(0,10)+'@shreya-naman-invite','DTSTAMP:'+now,'DTSTART:'+calendarLocalParts(event.start),'DTEND:'+calendarLocalParts(event.end),'SUMMARY:'+esc(calendarText(event.titleId,event.fallbackTitle)),'LOCATION:'+esc(calendarText(event.venueId,'Namaste Corbett Resort & Spa')+', Namaste Corbett Resort & Spa, Jim Corbett, Uttarakhand'),'DESCRIPTION:'+esc(calendarDescription(event)),'END:VEVENT');
+  lines.push('BEGIN:VEVENT','UID:'+event.id+'-'+event.start.slice(0,10)+'@shreya-naman-invite','DTSTAMP:'+now,'DTSTART:'+calendarUtcParts(event.start),'DTEND:'+calendarUtcParts(event.end),'SUMMARY:'+esc(calendarText(event.titleId,event.fallbackTitle)),'LOCATION:'+esc(calendarText(event.venueId,'Namaste Corbett Resort & Spa')+', Namaste Corbett Resort & Spa, Jim Corbett, Uttarakhand'),'DESCRIPTION:'+esc(calendarDescription(event)),'END:VEVENT');
  });
  lines.push('END:VCALENDAR');
- const blob=new Blob([lines.join('\\r\\n')+'\\r\\n'],{type:'text/calendar;charset=utf-8'});
+ const blob=new Blob([lines.join('\r\n')+'\r\n'],{type:'text/calendar;charset=utf-8'});
  const url=URL.createObjectURL(blob),link=document.createElement('a');
  link.href=url;link.download='Shreya-and-Naman-Wedding-Events.ics';document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
 }
