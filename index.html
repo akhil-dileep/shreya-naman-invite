@@ -3,6 +3,21 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#123d31">
+<meta name="description" content="Celebrate the wedding of Shreya Arora and Naman Dora on 13–14 December 2026. Explore the ceremonies, venue, family invitation and RSVP.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://akhil-dileep.github.io/shreya-naman-invite/">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Shreya &amp; Naman Wedding">
+<meta property="og:title" content="Shreya &amp; Naman — Wedding Invitation">
+<meta property="og:description" content="With love from our families. Join us for the wedding celebrations on 13–14 December 2026.">
+<meta property="og:url" content="https://akhil-dileep.github.io/shreya-naman-invite/">
+<meta property="og:image" content="https://akhil-dileep.github.io/shreya-naman-invite/invitation-board.jpg">
+<meta property="og:image:alt" content="Floral wedding invitation for Shreya Arora and Naman Dora">
+<meta property="og:image:type" content="image/jpeg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Shreya &amp; Naman — Wedding Invitation">
+<meta name="twitter:description" content="Join Shreya and Naman for their wedding celebrations, 13–14 December 2026.">
+<meta name="twitter:image" content="https://akhil-dileep.github.io/shreya-naman-invite/invitation-board.jpg">
 <title>Shreya & Naman — Wedding Invitation</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&display=swap');
@@ -59,9 +74,10 @@ p,label,.hint,.tiny,.scratch-hint,.event p{line-height:1.6}
 .event h3,.family-item h3{font-weight:800!important}
 strong{font-weight:800}
 </style>
+<link rel="stylesheet" href="premium.css">
 </head>
 <body>
-<button class="music" id="musicBtn" aria-label="Toggle background music">♫ Music: off</button>
+<button class="music" id="musicBtn" type="button" aria-label="Play or mute wedding music" aria-pressed="false">♫ Play wedding music</button>
 <section class="screen cover" id="cover">
  <div class="frame">
   <div class="eyebrow">Together with our families</div>
@@ -82,7 +98,8 @@ strong{font-weight:800}
    <div class="eyebrow">Save the date</div><div class="date"><span data-content="weddingDay">14</span><small data-content="weddingMonthYear">DECEMBER · 2026</small></div>
    <div class="rule">✦ ❧ ✦</div>
    <p style="font-size:1.25rem">A new chapter begins</p>
-   <p>At <strong data-content="venueName">Namaste Corbett Resort &amp; Spa</strong><br><span data-content="venueLocation">Jim Corbett · Uttarakhand</span></p>
+   <p class="venue-summary">At <strong data-content="venueName">Namaste Corbett Resort &amp; Spa</strong><br><span data-content="venueLocation">Jim Corbett · Uttarakhand</span></p>
+   <p><a class="venue-directions" id="venueDirections" href="https://www.google.com/maps/search/?api=1&amp;query=Namaste%20Corbett%20Resort%20%26%20Spa%2C%20Jim%20Corbett%2C%20Uttarakhand" target="_blank" rel="noopener noreferrer">📍 Open venue in Google Maps ↗</a></p>
    <div class="events">
     <article class="event event-mehendi"><h3 data-content="mehendiTitle">Mehendi Soirée</h3><p><strong data-content="mehendiDate">Sunday, 13 December 2026</strong></p><p data-content="mehendiTime">12:00 noon onwards</p><p data-content="mehendiVenue">Lawn at Namaste Corbett Resort</p><p><em data-content="mehendiDress">Festive &amp; Indo-Western</em></p></article>
     <article class="event event-engagement"><h3 data-content="engagementTitle">Engagement &amp; Cocktail Gala</h3><p><strong data-content="engagementDate">Sunday, 13 December 2026</strong></p><p data-content="engagementTime">7:00 PM onwards</p><p data-content="engagementVenue">A Starlit Soirée</p><p><em data-content="engagementDress">Evening glamour</em></p></article>
@@ -100,7 +117,7 @@ strong{font-weight:800}
  <div class="frame reveal">
   <div class="eyebrow">Our journey together</div><h2 class="script section-title" data-content="storyHeading" style="color:#e4c47e">Same souls, new adventures</h2>
   <p data-content="storyIntro">Scratch away the golden veil to reveal a little moment of us.</p>
-  <div class="scratchbox" id="scratchbox"><img id="couplePhoto" src="couple-photo.jpg" alt="Shreya and Naman together"><canvas id="scratchCanvas" aria-label="Scratch to reveal the couple's photo"></canvas></div>
+  <div class="scratchbox" id="scratchbox"><img id="couplePhoto" src="couple-photo.jpg" alt="Shreya and Naman together" width="440" height="550" loading="lazy" decoding="async"><canvas id="scratchCanvas" aria-label="Scratch to reveal the couple's photo"></canvas></div>
   <div class="scratch-hint">✧ <span data-content="storyHint">Use your finger or mouse to scratch the card</span> ✧</div>
   <p class="tiny">Tip: scratch across the gold surface; the photo will appear beneath.</p>
   <a class="pill" href="#lookbookSection">Explore the celebrations ↓</a>
@@ -124,18 +141,44 @@ strong{font-weight:800}
  <div class="frame reveal">
   <div class="eyebrow">A little note for us</div><h2 class="script section-title">Your wishes mean the world</h2>
   <p>Leave a wish, a memory, or a message for the couple.</p>
-  <textarea id="wish" placeholder="Write your message here…"></textarea>
-  <p><button class="pill" id="copyWish">Copy your note to share</button></p><div class="toast" id="toast" aria-live="polite"></div>
+  <label for="wishName" class="wish-label">Your name</label>
+  <input id="wishName" name="wishName" type="text" maxlength="120" autocomplete="name" placeholder="Who is sending this wish?">
+  <label for="wish" class="wish-label">Your message</label>
+  <textarea id="wish" maxlength="2000" placeholder="Write a blessing, a memory, or a little message…"></textarea>
+  <p class="note-actions"><button class="pill" id="submitWish" type="button">💌 Send your wishes to the couple</button><button class="pill" id="copyWish" type="button">Copy your note</button></p>
+  <div class="toast" id="toast" aria-live="polite"></div>
+  <p class="tiny">Your wish is private to the couple until they choose to share it.</p>
   <p style="margin-top:28px">With love,</p><div class="script" style="font-size:3.4rem;color:#1b4b3a">Shreya &amp; Naman</div>
   <a class="pill" href="#cover">↟ Back to the beginning</a>
  </div>
 </section>
-<footer class="footer">Made with love for Shreya &amp; Naman · 13–14 December 2026</footer>
+<footer class="footer">
+ <div class="footer-title">With love, Shreya &amp; Naman</div>
+ <p>13–14 December 2026 · Namaste Corbett Resort &amp; Spa</p>
+ <div class="share-actions">
+  <button type="button" class="pill" id="shareInvite">💌 Share invitation on WhatsApp</button>
+  <button type="button" class="pill" id="copyInviteLink">🔗 Copy invitation link</button>
+ </div>
+ <p class="tiny">We can’t wait to celebrate with you.</p><p class="tiny" id="shareStatus" aria-live="polite"></p>
+</footer>
 <script>
 const $=id=>document.getElementById(id);
 const sections=['dateSection','photoSection','lookbookSection','messageSection'];
 $('openSeal').addEventListener('click',()=>{ startMusic(); const family=$('familySection'); if(family){family.classList.remove('hidden');family.scrollIntoView({behavior:'smooth',block:'start'});}else{$('dateSection').classList.remove('hidden');$('dateSection').scrollIntoView({behavior:'smooth',block:'start'});} $('openSeal').textContent='✦'; $('openSeal').disabled=true; });
-$('pullScroll').addEventListener('click',()=>{const p=$('scrollPaper');const opening=!p.classList.contains('open');if(opening){p.style.maxHeight='none';p.classList.add('open');p.style.overflow='visible';}else{p.classList.remove('open');p.style.maxHeight='0';p.style.overflow='hidden';}$('pullScroll').textContent=opening?'↕ Roll the scroll back up':'↕ Pull the scroll to reveal the date';if(opening){['photoSection','lookbookSection','messageSection','rsvpSection'].forEach(id=>$(id)?.classList.remove('hidden'));initScratch();}});
+$('pullScroll').addEventListener('click',()=>{
+ const p=$('scrollPaper'),button=$('pullScroll'),opening=!p.classList.contains('open');
+ if(opening){
+   p.style.maxHeight='0px';p.style.overflow='hidden';p.classList.add('open');
+   requestAnimationFrame(()=>{p.style.maxHeight=p.scrollHeight+'px';});
+   const onOpenEnd=ev=>{if(ev.propertyName!=='max-height')return;if(p.classList.contains('open')){p.style.maxHeight='none';p.style.overflow='visible';}p.removeEventListener('transitionend',onOpenEnd);};
+   p.addEventListener('transitionend',onOpenEnd);
+ }else{
+   p.style.overflow='hidden';p.style.maxHeight=p.scrollHeight+'px';
+   requestAnimationFrame(()=>{p.classList.remove('open');p.style.maxHeight='0px';});
+ }
+ button.textContent=opening?'↕ Roll the scroll back up':'↕ Pull the scroll to reveal the date';
+ if(opening){['photoSection','lookbookSection','messageSection','rsvpSection'].forEach(id=>$(id)?.classList.remove('hidden'));initScratch();}
+});
 /* Energetic original dhol-style Punjabi wedding rhythm. This is generated audio, not a commercial song recording. */
 /* Music source: an admin-uploaded licensed audio file when configured; otherwise an original dhol-style fallback. */
 let audioCtx=null,musicMaster=null,musicComp=null,musicPlaying=false,musicMuted=false,musicTimer=null,musicStep=0,noiseBuffer=null,uploadedWeddingAudio=null,uploadedMusicPath='';
@@ -215,6 +258,18 @@ musicBtn?.addEventListener('click',()=>{if(!musicPlaying)startMusic();else toggl
 window.addEventListener('load', function(){ startMusic(); }, { once: true });
 let scratchReady=false;
 function initScratch(){if(scratchReady)return;scratchReady=true;const c=$('scratchCanvas'),box=$('scratchbox'),ctx=c.getContext('2d');const setup=()=>{const r=box.getBoundingClientRect();c.width=Math.round(r.width*devicePixelRatio);c.height=Math.round(r.height*devicePixelRatio);ctx.setTransform(devicePixelRatio,0,0,devicePixelRatio,0,0);const w=r.width,h=r.height;let grad=ctx.createLinearGradient(0,0,w,h);grad.addColorStop(0,'#f5e0a1');grad.addColorStop(.4,'#b88642');grad.addColorStop(.7,'#e7c77c');grad.addColorStop(1,'#9d6b32');ctx.fillStyle=grad;ctx.fillRect(0,0,w,h);ctx.fillStyle='#fff2c8';ctx.textAlign='center';ctx.font='26px Georgia';ctx.fillText('A little surprise',w/2,h/2-12);ctx.font='15px Georgia';ctx.fillText('Scratch to reveal ✧',w/2,h/2+20);ctx.globalCompositeOperation='destination-out';};setup();let drawing=false;function point(e){const r=c.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top}}function scratch(e){if(!drawing)return;e.preventDefault();const p=point(e);ctx.beginPath();ctx.arc(p.x,p.y,22,0,Math.PI*2);ctx.fill();}c.addEventListener('pointerdown',e=>{drawing=true;c.setPointerCapture(e.pointerId);scratch(e)});c.addEventListener('pointermove',scratch);c.addEventListener('pointerup',()=>{drawing=false;const d=ctx.getImageData(0,0,c.width,c.height).data;let clear=0;for(let i=3;i<d.length;i+=4)if(d[i]<20)clear++;if(clear>d.length/4*.43)c.classList.add('cleared')});window.addEventListener('resize',()=>{if(!c.classList.contains('cleared'))setup()});}
+
+$('shareInvite')?.addEventListener('click',()=>{
+ const invitationUrl=window.location.href.split('#')[0];
+ const shareText='You’re invited! Join Shreya Arora & Naman Dora for their wedding celebrations, 13–14 December 2026. Open the invitation: '+invitationUrl;
+ window.open('https://wa.me/?text='+encodeURIComponent(shareText),'_blank','noopener,noreferrer');
+});
+$('copyInviteLink')?.addEventListener('click',async()=>{
+ const link=window.location.href.split('#')[0];
+ const toast=$('shareStatus')||$('toast');
+ try{await navigator.clipboard.writeText(link);if(toast)toast.textContent='Invitation link copied. You can paste it into WhatsApp.';}
+ catch(err){if(toast)toast.textContent='Copy this invitation link: '+link;}
+});
 $('copyWish').addEventListener('click',async()=>{let t=$('wish').value.trim();if(!t){$('toast').textContent='Write a little wish first.';return}try{await navigator.clipboard.writeText('A wish for Shreya & Naman: '+t);$('toast').textContent='Your note has been copied — share it with the couple!'}catch(e){$('wish').select();$('toast').textContent='Your note is selected. Copy it to share with the couple.'}});
 </script>
 <script src="enhancements.js"></script>
@@ -237,6 +292,31 @@ window.inviteConfigPromise = (async function(){
     if (photo && cfg.photoPath) photo.src = cfg.photoPath;
     const pdf = document.getElementById('lookbookPdfLink');
     if (pdf && cfg.lookbookPath) pdf.href = cfg.lookbookPath;
+    const directions = document.getElementById('venueDirections');
+    if (directions && cfg.venueMapsUrl) directions.href = cfg.venueMapsUrl;
+    const shareImage = document.querySelector('meta[property="og:image"]');
+    if (shareImage && cfg.previewImage) shareImage.content = new URL(cfg.previewImage, window.location.href).href;
+    const bgSpecs = [
+      ['coverBackground','cover','linear-gradient(rgba(7,45,34,.68),rgba(4,28,22,.76))'],
+      ['scrollBackground','dateSection','linear-gradient(rgba(255,247,228,.80),rgba(255,240,211,.84))'],
+      ['photoBackground','photoSection','linear-gradient(rgba(9,43,35,.78),rgba(9,43,35,.86))'],
+      ['lookbookBackground','lookbookSection','linear-gradient(rgba(255,247,228,.77),rgba(255,240,211,.84))'],
+      ['familyBackground','familySection','linear-gradient(rgba(255,249,233,.80),rgba(255,243,220,.86))'],
+      ['countdownBackground','countdownSection','linear-gradient(rgba(255,249,233,.82),rgba(255,243,220,.86))'],
+      ['rsvpBackground','rsvpSection','linear-gradient(rgba(9,43,35,.82),rgba(9,43,35,.90))'],
+      ['wishesBackground','messageSection','linear-gradient(rgba(9,43,35,.80),rgba(9,43,35,.90))']
+    ];
+    bgSpecs.forEach(function(spec){
+      const el=document.getElementById(spec[1]), path=cfg[spec[0]];
+      if(!el||!path)return;
+      try{
+        const imageUrl=new URL(path,window.location.href).href.replace(/"/g,'%22');
+        el.style.backgroundImage=spec[2]+', url("'+imageUrl+'")';
+        el.style.backgroundPosition='center';
+        el.style.backgroundSize='cover';
+        el.style.backgroundAttachment='scroll';
+      }catch(_){}
+    });
     return cfg;
   } catch (error) {
     console.warn('Invitation settings fallback:', error);

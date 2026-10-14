@@ -44,16 +44,26 @@
 
   const countdown=document.createElement('section');
   countdown.id='countdownSection';countdown.className='extra-section hidden';
-  countdown.innerHTML=`<div class="extra-card reveal"><div class="eyebrow">The countdown begins</div><h2 class="extra-title">Until we say “I do”</h2><div class="count-grid"><div class="count-item"><strong id="cdDays">—</strong><span>Days</span></div><div class="count-item"><strong id="cdHours">—</strong><span>Hours</span></div><div class="count-item"><strong id="cdMinutes">—</strong><span>Minutes</span></div><div class="count-item"><strong id="cdSeconds">—</strong><span>Seconds</span></div></div><p>Monday, 14 December 2026 · Namaste Corbett Resort &amp; Spa</p><button class="pill" id="countdownContinue">See the wedding details ↓</button></div>`;
+  countdown.innerHTML=`<div class="extra-card reveal"><div class="eyebrow">The countdown begins</div><h2 class="extra-title" data-content="countdownHeading">Until we say “I do”</h2><div class="count-grid"><div class="count-item"><strong id="cdDays">—</strong><span>Days</span></div><div class="count-item"><strong id="cdHours">—</strong><span>Hours</span></div><div class="count-item"><strong id="cdMinutes">—</strong><span>Minutes</span></div><div class="count-item"><strong id="cdSeconds">—</strong><span>Seconds</span></div></div><p>Monday, 14 December 2026 · Namaste Corbett Resort &amp; Spa</p><button class="pill" id="countdownContinue">See the wedding details ↓</button></div>`;
   family.insertAdjacentElement('afterend',countdown);
 
   const rsvp=document.createElement('section');
   rsvp.id='rsvpSection';rsvp.className='extra-section dark hidden';
-  rsvp.innerHTML=`<div class="extra-card reveal"><div class="eyebrow">Kindly RSVP</div><h2 class="extra-title">Will you celebrate with us?</h2><p>Please let us know if you can join the celebrations.</p><form class="rsvp-form" id="rsvpForm"><label>Full name *<input name="name" required autocomplete="name" placeholder="Enter your name"></label><label>Email address<input name="email" type="email" autocomplete="email" placeholder="Enter your email"></label><label>Mobile number<input name="phone" type="tel" autocomplete="tel" placeholder="Enter your phone number"></label><label>Will you be attending? *<select name="attendance" required><option value="">Please choose</option><option>Yes, joyfully accepts</option><option>Sorry, unable to attend</option><option>Not sure yet</option></select></label><label>Number of guests, including you<select name="guests"><option>1</option><option>2</option><option>3</option><option>4</option><option>5+</option></select></label><button class="pill" type="submit">Prepare RSVP in WhatsApp</button></form><p class="rsvp-status" id="rsvpStatus" aria-live="polite"></p><p class="tiny">Your details are not saved by this website. You will review and send the message yourself.</p></div>`;
+  rsvp.innerHTML=`<div class="extra-card reveal"><div class="eyebrow">Kindly RSVP</div><h2 class="extra-title" data-content="rsvpHeading">Will you celebrate with us?</h2><p data-content="rsvpIntro">Please let us know if you can join the celebrations.</p><form class="rsvp-form" id="rsvpForm">
+  <div class="honeypot" aria-hidden="true"><label>Leave this field empty<input name="website" tabindex="-1" autocomplete="off"></label></div>
+  <label>Full name *<input name="name" required maxlength="120" autocomplete="name" placeholder="Enter your name"></label>
+  <label>Email address<input name="email" type="email" maxlength="254" autocomplete="email" placeholder="Enter your email (optional)"></label>
+  <label>Mobile number<input name="phone" type="tel" maxlength="40" autocomplete="tel" placeholder="Enter your phone number (optional)"></label>
+  <label>Will you be attending? *<select name="attendance" required><option value="">Please choose</option><option value="yes">Yes, joyfully accepts</option><option value="no">Sorry, unable to attend</option><option value="maybe">Not sure yet</option></select></label>
+  <label>Number of guests, including you<select name="guests"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5+</option></select></label>
+  <button class="pill" type="submit">💌 Send RSVP privately</button>
+</form>
+<p class="rsvp-status" id="rsvpStatus" aria-live="polite"></p>
+<p class="tiny">Your RSVP is private to the couple. If the guest database is not configured, the page will say so and offer a WhatsApp fallback instead.</p></div>`;
   const lookbook=$('lookbookSection');
   if(lookbook)lookbook.insertAdjacentElement('afterend',rsvp);else document.body.appendChild(rsvp);
 
-  const target=new Date('2026-12-14T16:00:00+05:30').getTime();
+  let target=new Date('2026-12-14T16:00:00+05:30').getTime();
   function tick(){
     let d=Math.max(0,target-Date.now());
     const days=Math.floor(d/86400000);d%=86400000;
@@ -65,9 +75,16 @@
     if($('cdSeconds'))$('cdSeconds').textContent=String(secs).padStart(2,'0');
   }
   tick();setInterval(tick,1000);
+  // Use the editable ceremony start time if the admin has configured one.
+  window.addEventListener('load',async()=>{
+    try{
+      const cfg=window.inviteConfigPromise?await window.inviteConfigPromise:(window.INVITE_CONFIG||{});
+      const configured=Date.parse(cfg.weddingStartDateTime||'');
+      if(Number.isFinite(configured)){target=configured;tick();}
+    }catch(_){}
+  },{once:true});
 
   function reveal(id){const el=$(id);if(el){el.classList.remove('hidden');el.scrollIntoView({behavior:'smooth',block:'start'});}}
-  $('openSeal')?.addEventListener('click',()=>{ if(typeof window.startMusic==='function') window.startMusic(); reveal('familySection'); });
   $('familyContinue')?.addEventListener('click',()=>reveal('countdownSection'));
   $('countdownContinue')?.addEventListener('click',()=>reveal('dateSection'));
 
@@ -83,18 +100,72 @@
     ev.preventDefault();reveal('rsvpSection');
   });
 
-  $('rsvpForm')?.addEventListener('submit',ev=>{
-    ev.preventDefault();const data=new FormData(ev.currentTarget);
-    const lines=[
-      'Wedding RSVP — Shreya & Naman',
-      'Name: '+data.get('name'),
-      'Attendance: '+data.get('attendance'),
-      'Guests: '+data.get('guests'),
-      'Email: '+(data.get('email')||'Not provided'),
-      'Phone: '+(data.get('phone')||'Not provided')
-    ];
-    const url='https://wa.me/?text='+encodeURIComponent(lines.join('\n'));
-    const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener';link.className='pill';link.textContent='Open WhatsApp to send RSVP';
-    $('rsvpStatus').replaceChildren(link);
+  async function insertPrivateRecord(table, payload){
+    const cfg=window.inviteConfigPromise?await window.inviteConfigPromise:(window.INVITE_CONFIG||{});
+    const base=String(cfg.supabaseUrl||'').replace(/\/+$/,'');
+    const key=String(cfg.supabaseAnonKey||'');
+    if(!base||!key)throw new Error('Guest database is not configured yet.');
+    const response=await fetch(base+'/rest/v1/'+table,{
+      method:'POST',
+      headers:{'apikey':key,'Content-Type':'application/json','Prefer':'return=minimal'},
+      body:JSON.stringify(payload)
+    });
+    if(!response.ok){
+      let detail='Database request failed.';
+      try{const body=await response.json();if(body.message)detail=body.message;}catch(_){}
+      throw new Error(detail);
+    }
+}
+function offerWhatsAppFallback(target, lines, message){
+    const cfg=window.INVITE_CONFIG||{};
+    const number=String(cfg.rsvpWhatsappNumber||'').replace(/\D/g,'');
+    target.replaceChildren(document.createTextNode(message+' '));
+    const link=document.createElement('a');
+    link.className='pill';
+    link.href='https://wa.me/'+(number||'')+'?text='+encodeURIComponent(lines.join('\n'));
+    link.target='_blank';link.rel='noopener noreferrer';link.textContent='Send by WhatsApp instead';
+    target.appendChild(link);
+}
+$('rsvpForm')?.addEventListener('submit',async ev=>{
+    ev.preventDefault();
+    const form=ev.currentTarget,data=new FormData(form),status=$('rsvpStatus'),button=form.querySelector('button[type="submit"]');
+    if(String(data.get('website')||'').trim())return;
+    const name=String(data.get('name')||'').trim();
+    if(name.length<1||name.length>120){status.textContent='Please enter your name (up to 120 characters).';return;}
+    const attendance=String(data.get('attendance')||'');
+    if(!['yes','no','maybe'].includes(attendance)){status.textContent='Please select an attendance response.';return;}
+    const guestCount=Math.max(1,Math.min(20,Number.parseInt(String(data.get('guests')||'1'),10)||1));
+    const payload={full_name:name,email:String(data.get('email')||'').trim()||null,phone:String(data.get('phone')||'').trim()||null,attendance,guest_count:guestCount};
+    const labels={yes:'Joyfully accepts',no:'Regretfully declines',maybe:'Not sure yet'};
+    const whatsappLines=['Wedding RSVP — Shreya & Naman','Name: '+name,'Attendance: '+labels[attendance],'Guests: '+guestCount,'Email: '+(payload.email||'Not provided'),'Phone: '+(payload.phone||'Not provided')];
+    button.disabled=true;button.textContent='Sending RSVP…';status.textContent='Saving your RSVP privately…';
+    try{
+      await insertPrivateRecord('wedding_rsvps',payload);
+      status.textContent='Thank you, '+name+'! Your RSVP has been received privately by the couple.';
+      form.reset();
+    }catch(error){
+      offerWhatsAppFallback(status,whatsappLines,'This RSVP was not saved to the guest list. '+error.message);
+    }finally{
+      button.disabled=false;button.textContent='💌 Send RSVP privately';
+    }
+  });
+  $('submitWish')?.addEventListener('click',async()=>{
+    const nameField=$('wishName'),wishField=$('wish'),status=$('toast'),button=$('submitWish');
+    const name=String(nameField?.value||'').trim(),message=String(wishField?.value||'').trim();
+    if(!name){status.textContent='Please enter your name first.';nameField?.focus();return;}
+    if(!message){status.textContent='Please write a wish first.';wishField?.focus();return;}
+    if(message.length>2000){status.textContent='Please keep your wish under 2,000 characters.';return;}
+    button.disabled=true;button.textContent='Sending your wish…';
+    try{
+      await insertPrivateRecord('wedding_notes',{sender_name:name,message,approved:false});
+      status.textContent='Thank you, '+name+'! Your wish has been saved privately for the couple.';
+      wishField.value='';
+    }catch(error){
+      const cfg=window.INVITE_CONFIG||{},number=String(cfg.rsvpWhatsappNumber||'').replace(/\D/g,'');
+      status.replaceChildren(document.createTextNode('Your wish was not saved to the private guestbook. '+error.message+' '));
+      const link=document.createElement('a');link.className='pill';
+      link.href='https://wa.me/'+(number||'')+'?text='+encodeURIComponent('A wish for Shreya & Naman from '+name+':\n'+message);
+      link.target='_blank';link.rel='noopener noreferrer';link.textContent='Send this wish on WhatsApp';status.appendChild(link);
+    }finally{button.disabled=false;button.textContent='💌 Send your wishes to the couple';}
   });
 })();
