@@ -177,7 +177,7 @@ try {
   await dbPage.locator('#wishName').fill('Database Test Guest');
   await dbPage.locator('#wish').fill('A test blessing for your new journey.');
   await dbPage.locator('#submitWish').click();
-  await dbPage.waitForFunction(()=>/saved privately/.test(document.querySelector('#toast')?.innerText||''));
+  await dbPage.waitForFunction(()=>/wish has been received/.test(document.querySelector('#toast')?.innerText||''));
   assert.equal(dbPosts.length,2,'Both RSVP and guest wish were posted to database endpoints');
   assert.equal(dbPosts[0].body.full_name,'Database Test Guest');
   assert.equal(dbPosts[0].body.guest_count,3);
