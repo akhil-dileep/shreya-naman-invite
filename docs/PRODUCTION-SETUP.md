@@ -15,7 +15,7 @@ GitHub Pages serves static files and cannot run a private database itself. This 
    `insert into public.invitation_admins (user_id) values ('YOUR_AUTH_USER_UUID');`
 5. In Project Settings -> API, copy the **Project URL** and **publishable/anon key**. Never use or paste the `service_role` key into the website.
 6. Open `admin.html`, enter the GitHub fine-grained token (Contents: Read and write), load the settings, paste the Supabase Project URL and publishable/anon key into Backend setup, and save.
-7. Wait for GitHub Pages to deploy. Submit a test RSVP and a test wish using a private browser tab. In Admin -> Guest submissions, sign in with the Supabase admin email/password and confirm both entries appear.
+7. Wait for GitHub Pages to deploy. Submit a test RSVP and a test wish using a private browser tab. In Admin -> Guest submissions, sign in with the Supabase admin email/password and confirm both entries appear. Use **Download guest list Excel (.xlsx)** and **Download wishes Excel (.xlsx)** to export the two separate tables; each export includes all saved records at the time you click it. If the workbook library is unavailable, the admin provides an Excel-compatible CSV fallback.
 8. Delete the test entries from the admin dashboard after verification if desired.
 
 The browser-visible Supabase publishable/anon key is designed for public clients. Access control is enforced by SQL policies: guests may submit, but only a UUID listed in `invitation_admins` can read/manage the responses. Do not add secrets such as service_role keys to `site-content.json`.
