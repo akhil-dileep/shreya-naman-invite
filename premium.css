@@ -118,3 +118,10 @@ input,select,textarea{font-size:16px!important}
 .event-calendar{display:inline-flex;align-items:center;justify-content:center;min-height:44px;margin:8px auto 0!important;font-size:.96rem!important;padding:10px 16px!important;max-width:100%}
 #attendanceSummary .db-count{flex:1 1 150px;min-width:135px}
 @media(max-width:600px){.lookbook-actions .pill,.calendar-actions .pill,.event .event-calendar{width:100%;white-space:normal}.calendar-actions .tiny{font-size:.86rem}}
+
+/* Distinct, easy-to-find calls to action below the wardrobe cards. */
+.lookbook-actions.response-actions{margin:24px 0 8px;gap:12px}
+.response-actions .pill{min-height:50px;padding:12px 20px;font-weight:800;font-size:1rem}
+.response-actions .response-primary{background:#123d31;color:#fff5df;border-color:#c49a54}
+.response-actions .pill:not(.response-primary){background:#fff9e9;color:#123d31}
+@media(max-width:600px){.lookbook-actions.response-actions .pill{width:100%;white-space:normal}}
