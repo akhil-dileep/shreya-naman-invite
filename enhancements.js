@@ -110,11 +110,11 @@
 }
 function offerWhatsAppFallback(target, lines, message){
     const cfg=window.INVITE_CONFIG||{};
-    const number=String(cfg.rsvpWhatsappNumber||'').replace(/\\D/g,'');
+    const number=String(cfg.rsvpWhatsappNumber||'').replace(/\D/g,'');
     target.replaceChildren(document.createTextNode(message+' '));
     const link=document.createElement('a');
     link.className='pill';
-    link.href='https://wa.me/'+(number||'')+'?text='+encodeURIComponent(lines.join('\\n'));
+    link.href='https://wa.me/'+(number||'')+'?text='+encodeURIComponent(lines.join('\n'));
     link.target='_blank';link.rel='noopener noreferrer';link.textContent='Send by WhatsApp instead';
     target.appendChild(link);
 }
@@ -153,10 +153,10 @@ $('rsvpForm')?.addEventListener('submit',async ev=>{
       status.textContent='Thank you, '+name+'! Your wish has been saved privately for the couple.';
       wishField.value='';
     }catch(error){
-      const cfg=window.INVITE_CONFIG||{},number=String(cfg.rsvpWhatsappNumber||'').replace(/\\D/g,'');
+      const cfg=window.INVITE_CONFIG||{},number=String(cfg.rsvpWhatsappNumber||'').replace(/\D/g,'');
       status.replaceChildren(document.createTextNode('Your wish was not saved to the private guestbook. '+error.message+' '));
       const link=document.createElement('a');link.className='pill';
-      link.href='https://wa.me/'+(number||'')+'?text='+encodeURIComponent('A wish for Shreya & Naman from '+name+':\\n'+message);
+      link.href='https://wa.me/'+(number||'')+'?text='+encodeURIComponent('A wish for Shreya & Naman from '+name+':\n'+message);
       link.target='_blank';link.rel='noopener noreferrer';link.textContent='Send this wish on WhatsApp';status.appendChild(link);
     }finally{button.disabled=false;button.textContent='💌 Send your wishes to the couple';}
   });
