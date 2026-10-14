@@ -63,7 +63,7 @@
   const lookbook=$('lookbookSection');
   if(lookbook)lookbook.insertAdjacentElement('afterend',rsvp);else document.body.appendChild(rsvp);
 
-  const target=new Date('2026-12-14T16:00:00+05:30').getTime();
+  let target=new Date('2026-12-14T16:00:00+05:30').getTime();
   function tick(){
     let d=Math.max(0,target-Date.now());
     const days=Math.floor(d/86400000);d%=86400000;
@@ -75,6 +75,14 @@
     if($('cdSeconds'))$('cdSeconds').textContent=String(secs).padStart(2,'0');
   }
   tick();setInterval(tick,1000);
+  // Use the editable ceremony start time if the admin has configured one.
+  window.addEventListener('load',async()=>{
+    try{
+      const cfg=window.inviteConfigPromise?await window.inviteConfigPromise:(window.INVITE_CONFIG||{});
+      const configured=Date.parse(cfg.weddingStartDateTime||'');
+      if(Number.isFinite(configured)){target=configured;tick();}
+    }catch(_){}
+  },{once:true});
 
   function reveal(id){const el=$(id);if(el){el.classList.remove('hidden');el.scrollIntoView({behavior:'smooth',block:'start'});}}
   $('familyContinue')?.addEventListener('click',()=>reveal('countdownSection'));
