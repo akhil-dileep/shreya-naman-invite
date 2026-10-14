@@ -55,11 +55,11 @@
   <label>Email address<input name="email" type="email" maxlength="254" autocomplete="email" placeholder="Enter your email (optional)"></label>
   <label>Mobile number<input name="phone" type="tel" maxlength="40" autocomplete="tel" placeholder="Enter your phone number (optional)"></label>
   <label>Will you be attending? *<select name="attendance" required><option value="">Please choose</option><option value="yes">Yes, joyfully accepts</option><option value="no">Sorry, unable to attend</option><option value="maybe">Not sure yet</option></select></label>
-  <label>Number of guests, including you<select name="guests"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5+</option></select></label>
+  <label>Number of guests, including you<select name="guests" required><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option></select></label>
   <button class="pill" type="submit">💌 Send RSVP privately</button>
 </form>
 <p class="rsvp-status" id="rsvpStatus" aria-live="polite"></p>
-<p class="tiny">Your RSVP is private to the couple. If the guest database is not configured, the page will say so and offer a WhatsApp fallback instead.</p></div>`;
+<p class="tiny">Your response is visible only in the couple’s private guest list. If saving fails, the page will tell you and offer a WhatsApp fallback. Please submit one RSVP per household, counting everyone attending including you.</p></div>`;
   const lookbook=$('lookbookSection');
   if(lookbook)lookbook.insertAdjacentElement('afterend',rsvp);else document.body.appendChild(rsvp);
 
