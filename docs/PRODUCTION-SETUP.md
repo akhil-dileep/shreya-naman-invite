@@ -30,7 +30,7 @@ The supplied six-page PDF is not embedded because its mobile inline preview was 
 - Page 5: Wedding, Monday 14 December 2026.
 - Page 6: after-party guidance.
 
-The invitation and wardrobe-colour cards now use the confirmed official venue labels: “The Emerald Lawns”, “The Starlit Banquet”, “The Azure Poolside”, and “The Grand Regal Mandap”. The original supplied PDF remains unchanged; its artwork still contains earlier venue wording, so use the webpage's venue cards as the authoritative labels. Temperatures printed in the PDF are estimates, not live forecasts.
+The invitation and wardrobe-colour cards use the current configured venue labels: “The Emerald Lawns”, “The Starlit Banquet”, “The Azure Poolside”, and “The Grand Regal Mandap”. The original supplied PDF remains unchanged; its artwork still contains earlier venue wording, so use the webpage's venue cards as the authoritative labels. Temperatures printed in the PDF are estimates, not live forecasts.
 
 Calendar links open a prefilled Google Calendar event using the listed start time and a two-hour placeholder duration because exact end times were not supplied. Guests can adjust the end time in Google Calendar before saving.
 
